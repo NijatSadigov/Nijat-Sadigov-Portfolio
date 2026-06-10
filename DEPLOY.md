@@ -18,13 +18,19 @@ Internet ──HTTPS──▶ Caddy (:443) ──▶ Go api (:8090) ──▶ Po
 
 ## Step 1 — Get a server (VPS)
 
-Pick any cheap Linux VPS (~$4–6/month). Good options:
+- **Oracle Cloud — Always Free** ($0 forever, best if money is tight): create an
+  **Ampere A1 (ARM)** compute instance — the Always Free allowance is up to
+  4 cores / 24 GB RAM. It runs this exact Docker setup. Trade-offs: signup needs
+  a credit card for identity verification (you are **not** charged), and free ARM
+  capacity occasionally makes you retry "Create" a few times. Pick **Ubuntu 24.04**
+  and give it a public IP. Also open ports 80/443 in the instance's *Security List*
+  / VCN (ingress rules), not just the OS firewall.
+- **Hetzner Cloud** (~€4/mo, simplest & rock-solid): a **CX22**, Ubuntu 24.04.
+- **DigitalOcean** ($6+/mo): most tutorials, **London** datacenter, often $200
+  free trial credit. Use the 2 GB droplet so the build doesn't run out of memory.
 
-- **Hetzner Cloud** (cheapest, ~€4) — choose a CX22, **Ubuntu 24.04**
-- **DigitalOcean** ($6 "Droplet") or **Linode / Vultr**
-
-Create it with **Ubuntu 24.04**. You'll get a **public IP address** (e.g.
-`203.0.113.10`) and SSH access. Note that IP — you need it next.
+Whichever you pick, create it with **Ubuntu 24.04**, and note its **public IP
+address** (e.g. `203.0.113.10`) — you need it in Step 2.
 
 ---
 
