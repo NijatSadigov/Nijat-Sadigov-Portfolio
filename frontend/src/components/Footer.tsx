@@ -9,36 +9,46 @@ export default function Footer({
   socialLinks: SocialLink[]
 }) {
   return (
-    <footer className="mt-20 border-t border-slate-800 bg-slate-900/40 py-10">
-      <div className="mx-auto max-w-5xl px-6 text-center">
-        <h2 className="theme-heading text-xl font-semibold text-white">Get in touch</h2>
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
-          {profile.email && (
-            <a
-              href={`mailto:${profile.email}`}
-              className="rounded-full bg-accent px-5 py-2 font-medium text-white transition hover:opacity-90"
-            >
-              Email me
-            </a>
-          )}
-          {socialLinks.map((s) => (
-            <a
-              key={s.id}
-              href={s.url}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-slate-700 px-5 py-2 text-slate-200 transition hover:border-accent hover:text-accent"
-            >
-              {s.label || s.platform}
-            </a>
-          ))}
-        </div>
-        <p className="mt-8 text-xs text-slate-600">
-          © {new Date().getFullYear()} {profile.fullName || 'Portfolio'} ·{' '}
-          <Link to="/admin" className="hover:text-accent">
-            Admin
+    <footer className="mt-28 border-t border-white/10">
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        <p className="kicker">Get in touch</p>
+        <h2 className="theme-heading mt-4 text-4xl font-bold text-white sm:text-5xl">
+          Let’s build something.
+        </h2>
+
+        {profile.email && (
+          <a
+            href={`mailto:${profile.email}`}
+            className="mt-6 inline-block font-mono text-lg text-accent underline-offset-8 transition hover:underline sm:text-xl"
+          >
+            {profile.email}
+          </a>
+        )}
+
+        {socialLinks.length > 0 && (
+          <div className="mt-8 flex flex-wrap gap-2">
+            {socialLinks.map((s) => (
+              <a
+                key={s.id}
+                href={s.url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-lg border border-white/10 px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-slate-400 transition hover:border-accent hover:text-accent"
+              >
+                {s.label || s.platform}
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-14 flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-6 font-mono text-[11px] uppercase tracking-wider text-slate-600">
+          <span>
+            © {new Date().getFullYear()} {profile.fullName || 'Portfolio'}
+          </span>
+          <Link to="/admin" className="transition hover:text-accent">
+            ⚙ Admin
           </Link>
-        </p>
+        </div>
       </div>
     </footer>
   )

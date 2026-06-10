@@ -11,10 +11,10 @@ function dirForIndex(i: number, n: number): DiceDir {
 
 function buttonClass(active: boolean) {
   return [
-    'w-full rounded-xl border px-5 py-3 text-sm font-semibold transition-all duration-200',
+    'w-full rounded-lg border px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] transition-all duration-200',
     active
-      ? 'border-accent bg-accent/15 text-accent shadow-[0_0_20px_-4px_rgb(var(--accent))]'
-      : 'border-slate-700 bg-slate-900/60 text-slate-300 hover:border-accent/60 hover:text-white',
+      ? 'border-accent bg-accent/10 text-accent shadow-[0_0_28px_-6px_rgb(var(--accent))]'
+      : 'border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/30 hover:text-white',
   ].join(' ')
 }
 
@@ -28,14 +28,15 @@ export default function CategoryButtons({
   onSelect: (id: string, direction: DiceDir) => void
 }) {
   return (
-    <div className="mx-auto mt-14 max-w-3xl px-6">
+    <div className="mx-auto mt-16 max-w-3xl px-6">
       <div className="flex justify-center">
         <button
           type="button"
+          aria-pressed={active === ALL}
           onClick={() => onSelect(ALL, 'up')}
-          className={`${buttonClass(active === ALL)} sm:w-56`}
+          className={`${buttonClass(active === ALL)} sm:w-60`}
         >
-          All
+          ◈ All
         </button>
       </div>
 
@@ -44,6 +45,7 @@ export default function CategoryButtons({
           <button
             key={c.id}
             type="button"
+            aria-pressed={active === c.id}
             onClick={() => onSelect(c.id, dirForIndex(i, categories.length))}
             className={buttonClass(active === c.id)}
           >

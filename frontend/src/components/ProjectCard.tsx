@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import type { Project } from '../types'
 
 // Cover image first, then the rest — used for the inline hover gallery.
@@ -12,9 +11,11 @@ function orderedImages(p: Project): string[] {
 export default function ProjectCard({
   project,
   dimmed = false,
+  onOpen,
 }: {
   project: Project
   dimmed?: boolean
+  onOpen: (p: Project) => void
 }) {
   const images = orderedImages(project)
   const [idx, setIdx] = useState(0)
@@ -41,60 +42,75 @@ export default function ProjectCard({
   )
 
   return (
-    <Link
-      to={`/projects/${project.slug}`}
+    <button
+      type="button"
+      onClick={() => onOpen(project)}
       onMouseEnter={startCycle}
       onMouseLeave={stopCycle}
       className={[
-        'theme-card group block overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 transition-all duration-300 hover:border-accent/60 hover:shadow-lg hover:shadow-accent/10',
+        'theme-card group relative block w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] text-left transition-all duration-300',
+        'hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_48px_-12px_rgb(var(--accent)/0.3)]',
         dimmed ? 'opacity-40 hover:opacity-100' : 'opacity-100',
       ].join(' ')}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-slate-800">
+      <div className="relative aspect-video w-full overflow-hidden bg-[#0d0d13]">
         {images.length > 0 ? (
           <img
             src={images[idx]}
             alt={project.title}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            loading="lazy"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="grid h-full place-items-center text-sm text-slate-600">No image</div>
+          <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-widest text-slate-600">
+            no image
+          </div>
         )}
         {images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/40 px-2 py-1 backdrop-blur-sm">
+          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
             {images.map((_, i) => (
               <span
                 key={i}
-                className={`h-1.5 w-1.5 rounded-full transition ${
-                  i === idx ? 'bg-accent' : 'bg-white/50'
-                }`}
+                className={`h-1.5 w-1.5 rounded-full transition ${i === idx ? 'bg-accent' : 'bg-white/40'}`}
               />
             ))}
           </div>
         )}
+        <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/50 font-mono text-sm text-accent opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+          ↗
+        </span>
       </div>
-      <div className="p-4">
-        <div className="flex items-center gap-2">
-          {project.featured && (
-            <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
-              Featured
-            </span>
-          )}
-          <h3 className="theme-heading font-semibold text-white">{project.title}</h3>
-        </div>
+
+      <div className="p-5">
+        {project.featured && (
+          <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            ★ Featured
+          </p>
+        )}
+        <h3 className="theme-heading text-lg font-semibold text-white">{project.title}</h3>
         {project.summary && (
-          <p className="mt-1 line-clamp-2 text-sm text-slate-400">{project.summary}</p>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-400">
+            {project.summary}
+          </p>
         )}
         {project.tech.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {project.tech.slice(0, 4).map((t) => (
-              <span key={t} className="rounded bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
+              <span
+                key={t}
+                className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-500"
+              >
                 {t}
               </span>
             ))}
+            {project.tech.length > 4 && (
+              <span className="px-1 font-mono text-[10px] text-slate-600">
+                +{project.tech.length - 4}
+              </span>
+            )}
           </div>
         )}
       </div>
-    </Link>
+    </button>
   )
 }

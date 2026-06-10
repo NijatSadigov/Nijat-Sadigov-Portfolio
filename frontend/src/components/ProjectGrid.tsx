@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import type { Project } from '../types'
 import { ALL } from '../types'
 import ProjectCard from './ProjectCard'
+import ProjectModal from './ProjectModal'
 
 export default function ProjectGrid({
   projects,
@@ -9,6 +11,7 @@ export default function ProjectGrid({
   projects: Project[]
   active: string
 }) {
+  const [selected, setSelected] = useState<Project | null>(null)
   const inCategory = (p: Project) => active === ALL || p.categoryIds.includes(active)
 
   // For a category view: matching projects float to the top; others dim.
@@ -19,17 +22,26 @@ export default function ProjectGrid({
 
   if (projects.length === 0) {
     return (
-      <p className="mt-10 text-center text-slate-500">
-        No projects yet — add some from the admin dashboard.
+      <p className="mt-10 text-center font-mono text-sm text-slate-600">
+        // no projects yet
       </p>
     )
   }
 
   return (
-    <div className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-5 px-6 sm:grid-cols-2 lg:grid-cols-3">
-      {ordered.map((p) => (
-        <ProjectCard key={p.id} project={p} dimmed={active !== ALL && !inCategory(p)} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {ordered.map((p) => (
+          <ProjectCard
+            key={p.id}
+            project={p}
+            dimmed={active !== ALL && !inCategory(p)}
+            onOpen={setSelected}
+          />
+        ))}
+      </div>
+
+      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
+    </>
   )
 }

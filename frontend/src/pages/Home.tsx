@@ -13,12 +13,13 @@ import {
   EducationSection,
   ExperienceSection,
   ResumeBar,
+  SectionShell,
   SkillsSection,
 } from '../components/sections'
 import { applyTheme } from '../lib/theme'
 import { ALL, type SiteData } from '../types'
 
-const DEFAULT_ACCENT = '#6366f1'
+const DEFAULT_ACCENT = '#818cf8'
 
 export default function Home() {
   const [site, setSite] = useState<SiteData | null>(null)
@@ -33,6 +34,7 @@ export default function Home() {
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'))
   }, [])
 
+  // Shift accent + theme flavour to match the active profile.
   useEffect(() => {
     if (!site) return
     if (active === ALL) {
@@ -50,20 +52,24 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="grid min-h-screen place-items-center px-6 text-center text-slate-400">
+      <div className="grid min-h-screen place-items-center px-6 text-center">
         <div>
-          <p className="text-lg">Couldn’t reach the API.</p>
-          <p className="mt-2 text-sm text-slate-600">{error}</p>
+          <p className="font-mono text-sm text-red-400">// couldn’t reach the API</p>
+          <p className="mt-2 font-mono text-xs text-slate-600">{error}</p>
         </div>
       </div>
     )
   }
   if (!site) {
-    return <div className="grid min-h-screen place-items-center text-slate-400">Loading…</div>
+    return (
+      <div className="grid min-h-screen place-items-center">
+        <p className="cursor-blink font-mono text-sm text-accent">▌</p>
+      </div>
+    )
   }
 
   const activeName =
-    active === ALL ? 'All work' : (site.categories.find((c) => c.id === active)?.name ?? '')
+    active === ALL ? 'all work' : (site.categories.find((c) => c.id === active)?.name ?? '')
 
   return (
     <div className="min-h-screen pb-10">
@@ -76,22 +82,19 @@ export default function Home() {
 
       {/* Category-dependent content rotates like a die when the profile changes. */}
       <DiceScene sceneKey={active} direction={direction}>
-        <section className="mt-12">
-          <h2 className="theme-heading mx-auto max-w-6xl px-6 text-2xl font-bold text-white">
-            {activeName} · Projects
-          </h2>
+        <SectionShell no="01" title="Projects" meta={`/ ${activeName.toLowerCase()}`}>
           <ProjectGrid projects={site.projects} active={active} />
-        </section>
+        </SectionShell>
 
-        <SkillsSection skills={site.skills} active={active} />
-        <CertificationsSection certifications={site.certifications} active={active} />
-        <AchievementsSection achievements={site.achievements} active={active} />
+        <SkillsSection no="02" skills={site.skills} active={active} />
+        <CertificationsSection no="03" certifications={site.certifications} active={active} />
+        <AchievementsSection no="04" achievements={site.achievements} active={active} />
       </DiceScene>
 
       {/* Global sections (same across all profiles). */}
-      <EducationSection education={site.education} />
-      <ExperienceSection experience={site.experience} />
-      <ContactSection email={site.profile.email} />
+      <EducationSection no="05" education={site.education} />
+      <ExperienceSection no="06" experience={site.experience} />
+      <ContactSection no="07" email={site.profile.email} />
 
       <Footer profile={site.profile} socialLinks={site.socialLinks} />
     </div>

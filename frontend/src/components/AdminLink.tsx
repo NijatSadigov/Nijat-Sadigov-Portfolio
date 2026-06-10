@@ -6,7 +6,7 @@ export default function AdminLink() {
     <Link
       to="/admin"
       title="Admin"
-      className="fixed right-4 top-4 z-50 rounded-full border border-slate-700/70 bg-slate-900/70 px-3 py-1.5 text-xs text-slate-400 backdrop-blur transition hover:border-accent hover:text-accent"
+      className="fixed right-4 top-4 z-50 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-500 backdrop-blur transition hover:border-accent hover:text-accent"
     >
       ⚙ Admin
     </Link>

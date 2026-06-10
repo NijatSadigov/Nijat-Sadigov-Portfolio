@@ -23,49 +23,56 @@ export default function ProjectDetail() {
 
   if (error) {
     return (
-      <div className="grid min-h-screen place-items-center text-center text-slate-400">
+      <div className="grid min-h-screen place-items-center text-center">
         <div>
-          <p>Project not found.</p>
-          <Link to="/" className="mt-3 inline-block text-accent hover:underline">
-            ← Back home
+          <p className="font-mono text-sm text-slate-500">// project not found</p>
+          <Link to="/" className="mt-3 inline-block font-mono text-xs uppercase tracking-wider text-accent hover:underline">
+            ← back home
           </Link>
         </div>
       </div>
     )
   }
   if (!project) {
-    return <div className="grid min-h-screen place-items-center text-slate-400">Loading…</div>
+    return (
+      <div className="grid min-h-screen place-items-center">
+        <p className="cursor-blink font-mono text-sm text-accent">▌</p>
+      </div>
+    )
   }
 
   const images = project.images
   const current = images[activeImage]
 
   return (
-    <article className="mx-auto max-w-4xl px-6 py-12">
-      <Link to="/" className="text-sm text-slate-400 hover:text-accent">
-        ← Back
+    <article className="mx-auto max-w-4xl px-6 py-14">
+      <Link to="/" className="font-mono text-xs uppercase tracking-wider text-slate-500 transition hover:text-accent">
+        ← back
       </Link>
 
-      <h1 className="theme-heading mt-4 text-3xl font-bold text-white">{project.title}</h1>
-      {project.summary && <p className="mt-2 text-lg text-slate-300">{project.summary}</p>}
+      <h1 className="theme-heading mt-5 text-4xl font-bold text-white">{project.title}</h1>
+      {project.summary && <p className="mt-3 text-lg text-slate-300">{project.summary}</p>}
 
       {project.tech.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-1.5">
           {project.tech.map((t) => (
-            <span key={t} className="rounded bg-slate-800 px-2.5 py-1 text-sm text-slate-200">
+            <span
+              key={t}
+              className="rounded border border-white/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-400"
+            >
               {t}
             </span>
           ))}
         </div>
       )}
 
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="mt-6 flex flex-wrap gap-3">
         {project.repoUrl && (
           <a
             href={project.repoUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:border-accent hover:text-accent"
+            className="rounded-lg border border-white/15 px-4 py-2 font-mono text-xs uppercase tracking-wider transition hover:border-accent hover:text-accent"
           >
             GitHub ↗
           </a>
@@ -75,7 +82,7 @@ export default function ProjectDetail() {
             href={project.demoUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="rounded-lg bg-accent px-4 py-2 font-mono text-xs uppercase tracking-wider text-white transition hover:opacity-90"
           >
             Live demo ↗
           </a>
@@ -84,14 +91,14 @@ export default function ProjectDetail() {
 
       {/* Gallery */}
       {current && (
-        <div className="mt-8">
+        <div className="mt-9">
           <img
             src={current.url}
             alt={current.caption || project.title}
-            className="theme-card w-full rounded-xl border border-slate-800 object-cover"
+            className="theme-card w-full rounded-xl border border-white/10 object-cover"
           />
           {current.caption && (
-            <p className="mt-2 text-center text-sm text-slate-500">{current.caption}</p>
+            <p className="mt-2 text-center font-mono text-xs text-slate-500">{current.caption}</p>
           )}
           {images.length > 1 && (
             <div className="mt-3 flex flex-wrap gap-2">
@@ -99,8 +106,8 @@ export default function ProjectDetail() {
                 <button
                   key={img.id}
                   onClick={() => setActiveImage(i)}
-                  className={`h-16 w-24 overflow-hidden rounded border-2 ${
-                    i === activeImage ? 'border-accent' : 'border-transparent opacity-70'
+                  className={`h-16 w-24 overflow-hidden rounded border-2 transition ${
+                    i === activeImage ? 'border-accent' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img src={img.url} alt="" className="h-full w-full object-cover" />
@@ -112,15 +119,15 @@ export default function ProjectDetail() {
       )}
 
       {project.description && (
-        <div className="prose-invert mt-10 max-w-none space-y-4 leading-relaxed text-slate-300">
+        <div className="md mt-10">
           <ReactMarkdown>{project.description}</ReactMarkdown>
         </div>
       )}
 
       {project.demoGuide && (
-        <section className="mt-10 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-          <h2 className="theme-heading text-xl font-semibold text-white">How to run / use it</h2>
-          <div className="mt-3 space-y-3 text-slate-300">
+        <section className="mt-10 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+          <h2 className="kicker">How to run / use it</h2>
+          <div className="md mt-3">
             <ReactMarkdown>{project.demoGuide}</ReactMarkdown>
           </div>
         </section>
