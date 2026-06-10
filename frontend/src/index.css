@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* default accent (indigo) as space-separated RGB for tailwind alpha support */
+  --accent: 99 102 241;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  transition: background-color 0.4s ease;
+}
+
+/* Perspective wrapper so the dice/cube rotation reads as 3D. */
+.scene {
+  perspective: 1600px;
+}
+
+/* ── Per-profile themes ─────────────────────────────── */
+
+/* Game dev: pixel-art flavour */
+[data-theme='pixel'] .theme-heading {
+  @apply font-pixel tracking-tight;
+  text-shadow: 2px 2px 0 rgb(var(--accent));
+}
+[data-theme='pixel'] .theme-card {
+  @apply rounded-none border-2;
+  image-rendering: pixelated;
+}
+
+/* Research: serif, paper-like */
+[data-theme='research'] .theme-heading {
+  @apply font-serifResearch;
+}
+[data-theme='research'] .theme-card {
+  @apply rounded-md;
+}

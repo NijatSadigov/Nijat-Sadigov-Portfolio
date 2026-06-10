@@ -1,0 +1,33 @@
+# Env / secrets
+.env
+.env.local
+*.local
+
+# Go
+backend/bin/
+# scratch + one-off seed/render scripts (agent-generated, not part of the app)
+backend/tmp/
+*.exe
+*.exe~
+*.test
+*.out
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+
+# Uploads (user-generated content stored on disk)
+backend/uploads/
+uploads/
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json

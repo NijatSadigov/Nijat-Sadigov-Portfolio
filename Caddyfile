@@ -1,0 +1,30 @@
+# Caddy reverse proxy.
+#
+# Caddy automatically gets and renews a free HTTPS certificate (Let's Encrypt)
+# for every public domain named below — you don't manage certs at all.
+#
+# DOMAIN comes from .env (e.g. nijatsadigov.com).
+# For local testing set DOMAIN=localhost (Caddy uses a local self-signed cert).
+
+# ── Main site: the portfolio ────────────────────────────────────────────
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy api:8090
+}
+
+# ── Project demo subdomains ─────────────────────────────────────────────
+# Each demo is its own container/service; point a subdomain at it here.
+# You also need a DNS record for the subdomain (or a wildcard *.DOMAIN) → server IP.
+# Uncomment and adapt one of these per demo, then `docker compose up -d`:
+#
+# A demo running as a container (e.g. service "snake-game" on port 3000):
+# snake.{$DOMAIN} {
+# 	reverse_proxy snake-game:3000
+# }
+#
+# A static / WASM build (e.g. a Unity or web game) served straight from a folder:
+# tetris.{$DOMAIN} {
+# 	root * /srv/demos/tetris
+# 	file_server
+# 	try_files {path} /index.html
+# }
