@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
-import AdminLink from '../components/AdminLink'
+import TopControls from '../components/TopControls'
 import CategoryButtons from '../components/CategoryButtons'
 import DiceScene, { type DiceDir } from '../components/DiceScene'
 import Footer from '../components/Footer'
@@ -55,7 +55,7 @@ export default function Home() {
       <div className="grid min-h-screen place-items-center px-6 text-center">
         <div>
           <p className="font-mono text-sm text-red-400">// couldn’t reach the API</p>
-          <p className="mt-2 font-mono text-xs text-slate-600">{error}</p>
+          <p className="mt-2 font-mono text-xs text-faint">{error}</p>
         </div>
       </div>
     )
@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-10">
-      <AdminLink />
+      <TopControls />
       <Hero profile={site.profile} socialLinks={site.socialLinks} />
 
       <CategoryButtons categories={site.categories} active={active} onSelect={select} />

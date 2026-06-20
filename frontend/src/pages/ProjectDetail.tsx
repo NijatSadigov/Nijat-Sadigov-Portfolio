@@ -25,8 +25,11 @@ export default function ProjectDetail() {
     return (
       <div className="grid min-h-screen place-items-center text-center">
         <div>
-          <p className="font-mono text-sm text-slate-500">// project not found</p>
-          <Link to="/" className="mt-3 inline-block font-mono text-xs uppercase tracking-wider text-accent hover:underline">
+          <p className="font-mono text-sm text-faint">// project not found</p>
+          <Link
+            to="/"
+            className="mt-3 inline-block font-mono text-xs uppercase tracking-wider text-accent hover:underline"
+          >
             ← back home
           </Link>
         </div>
@@ -46,19 +49,22 @@ export default function ProjectDetail() {
 
   return (
     <article className="mx-auto max-w-4xl px-6 py-14">
-      <Link to="/" className="font-mono text-xs uppercase tracking-wider text-slate-500 transition hover:text-accent">
+      <Link
+        to="/"
+        className="font-mono text-xs uppercase tracking-wider text-faint transition hover:text-accent"
+      >
         ← back
       </Link>
 
-      <h1 className="theme-heading mt-5 text-4xl font-bold text-white">{project.title}</h1>
-      {project.summary && <p className="mt-3 text-lg text-slate-300">{project.summary}</p>}
+      <h1 className="theme-heading mt-5 text-4xl font-bold text-ink">{project.title}</h1>
+      {project.summary && <p className="mt-3 text-lg text-muted">{project.summary}</p>}
 
       {project.tech.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
           {project.tech.map((t) => (
             <span
               key={t}
-              className="rounded border border-white/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-400"
+              className="rounded border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted"
             >
               {t}
             </span>
@@ -72,7 +78,7 @@ export default function ProjectDetail() {
             href={project.repoUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-white/15 px-4 py-2 font-mono text-xs uppercase tracking-wider transition hover:border-accent hover:text-accent"
+            className="rounded-lg border border-line px-4 py-2 font-mono text-xs uppercase tracking-wider transition hover:border-accent hover:text-accent"
           >
             GitHub ↗
           </a>
@@ -89,16 +95,15 @@ export default function ProjectDetail() {
         )}
       </div>
 
-      {/* Gallery */}
       {current && (
         <div className="mt-9">
           <img
             src={current.url}
             alt={current.caption || project.title}
-            className="theme-card w-full rounded-xl border border-white/10 object-cover"
+            className="theme-card w-full rounded-xl border border-line object-cover"
           />
           {current.caption && (
-            <p className="mt-2 text-center font-mono text-xs text-slate-500">{current.caption}</p>
+            <p className="mt-2 text-center font-mono text-xs text-faint">{current.caption}</p>
           )}
           {images.length > 1 && (
             <div className="mt-3 flex flex-wrap gap-2">
@@ -125,7 +130,7 @@ export default function ProjectDetail() {
       )}
 
       {project.demoGuide && (
-        <section className="mt-10 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <section className="mt-10 rounded-xl border border-line bg-bg/40 p-6">
           <h2 className="kicker">How to run / use it</h2>
           <div className="md mt-3">
             <ReactMarkdown>{project.demoGuide}</ReactMarkdown>

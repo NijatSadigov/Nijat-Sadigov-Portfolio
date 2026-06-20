@@ -19,6 +19,17 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- set theme mode before paint to avoid a flash -->
+    <script>
+      (function () {
+        try {
+          document.documentElement.dataset.mode =
+            localStorage.getItem('portfolio.mode') || 'dark'
+        } catch (e) {
+          document.documentElement.dataset.mode = 'dark'
+        }
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

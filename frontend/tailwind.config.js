@@ -4,8 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Driven by a CSS variable so it can shift per active profile/theme.
+        // All driven by CSS variables so they flip per light/dark + per profile.
         accent: 'rgb(var(--accent) / <alpha-value>)',
+        bg: 'rgb(var(--bg) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        faint: 'rgb(var(--faint) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'Inter', 'sans-serif'],

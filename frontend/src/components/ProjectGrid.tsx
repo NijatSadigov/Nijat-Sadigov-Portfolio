@@ -4,6 +4,24 @@ import { ALL } from '../types'
 import ProjectCard from './ProjectCard'
 import ProjectModal from './ProjectModal'
 
+function Grid({
+  projects,
+  dimmed,
+  onOpen,
+}: {
+  projects: Project[]
+  dimmed?: boolean
+  onOpen: (p: Project) => void
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((p) => (
+        <ProjectCard key={p.id} project={p} dimmed={dimmed} onOpen={onOpen} />
+      ))}
+    </div>
+  )
+}
+
 export default function ProjectGrid({
   projects,
   active,
@@ -12,34 +30,36 @@ export default function ProjectGrid({
   active: string
 }) {
   const [selected, setSelected] = useState<Project | null>(null)
-  const inCategory = (p: Project) => active === ALL || p.categoryIds.includes(active)
-
-  // For a category view: matching projects float to the top; others dim.
-  const ordered =
-    active === ALL
-      ? projects
-      : [...projects].sort((a, b) => Number(inCategory(b)) - Number(inCategory(a)))
 
   if (projects.length === 0) {
-    return (
-      <p className="mt-10 text-center font-mono text-sm text-slate-600">
-        // no projects yet
-      </p>
-    )
+    return <p className="mt-10 text-center font-mono text-sm text-faint">// no projects yet</p>
   }
+
+  // ALL view: everything together. Category view: matching projects shown first
+  // and in full; the rest moved below an "other work" divider, dimmed.
+  const matching =
+    active === ALL ? projects : projects.filter((p) => p.categoryIds.includes(active))
+  const others = active === ALL ? [] : projects.filter((p) => !p.categoryIds.includes(active))
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {ordered.map((p) => (
-          <ProjectCard
-            key={p.id}
-            project={p}
-            dimmed={active !== ALL && !inCategory(p)}
-            onOpen={setSelected}
-          />
-        ))}
-      </div>
+      {matching.length > 0 ? (
+        <Grid projects={matching} onOpen={setSelected} />
+      ) : (
+        <p className="font-mono text-sm text-faint">// nothing in this profile yet</p>
+      )}
+
+      {others.length > 0 && (
+        <div className="mt-12">
+          <div className="mb-6 flex items-center gap-4">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-faint">
+              Other work
+            </span>
+            <span aria-hidden className="h-px flex-1 bg-line" />
+          </div>
+          <Grid projects={others} dimmed onOpen={setSelected} />
+        </div>
+      )}
 
       {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
     </>

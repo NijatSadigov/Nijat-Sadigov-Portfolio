@@ -9,10 +9,10 @@ export default function Footer({
   socialLinks: SocialLink[]
 }) {
   return (
-    <footer className="mt-28 border-t border-white/10">
+    <footer className="mt-28 border-t border-line">
       <div className="mx-auto max-w-6xl px-6 py-16">
         <p className="kicker">Get in touch</p>
-        <h2 className="theme-heading mt-4 text-4xl font-bold text-white sm:text-5xl">
+        <h2 className="theme-heading mt-4 text-4xl font-bold text-ink sm:text-5xl">
           Let’s build something.
         </h2>
 
@@ -33,7 +33,7 @@ export default function Footer({
                 href={s.url}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-lg border border-white/10 px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-slate-400 transition hover:border-accent hover:text-accent"
+                className="rounded-lg border border-line px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-muted transition hover:border-accent hover:text-accent"
               >
                 {s.label || s.platform}
               </a>
@@ -41,7 +41,7 @@ export default function Footer({
           </div>
         )}
 
-        <div className="mt-14 flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-6 font-mono text-[11px] uppercase tracking-wider text-slate-600">
+        <div className="mt-14 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 font-mono text-[11px] uppercase tracking-wider text-faint">
           <span>
             © {new Date().getFullYear()} {profile.fullName || 'Portfolio'}
           </span>

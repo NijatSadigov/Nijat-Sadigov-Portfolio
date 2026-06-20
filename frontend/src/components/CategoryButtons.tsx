@@ -14,7 +14,7 @@ function buttonClass(active: boolean) {
     'w-full rounded-lg border px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] transition-all duration-200',
     active
       ? 'border-accent bg-accent/10 text-accent shadow-[0_0_28px_-6px_rgb(var(--accent))]'
-      : 'border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/30 hover:text-white',
+      : 'border-line bg-surface text-muted hover:border-accent/50 hover:text-ink',
   ].join(' ')
 }
 

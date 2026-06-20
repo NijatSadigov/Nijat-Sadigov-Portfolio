@@ -30,9 +30,9 @@ export function SectionShell({
     <section className="mx-auto mt-20 max-w-6xl px-6">
       <div className="mb-7 flex items-baseline gap-4">
         {no && <span className="font-mono text-xs text-accent">{no}</span>}
-        <h2 className="theme-heading text-3xl font-bold text-white">{title}</h2>
-        {meta && <span className="font-mono text-xs text-slate-500">{meta}</span>}
-        <span aria-hidden className="h-px flex-1 self-center bg-white/10" />
+        <h2 className="theme-heading text-3xl font-bold text-ink">{title}</h2>
+        {meta && <span className="font-mono text-xs text-faint">{meta}</span>}
+        <span aria-hidden className="h-px flex-1 self-center bg-line" />
       </div>
       {children}
     </section>
@@ -60,20 +60,20 @@ export function SkillsSection({
         {skills.map((s) => (
           <div
             key={s.id}
-            className={`theme-card min-w-[8rem] rounded-lg border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition hover:border-white/25 ${dimCls(
+            className={`theme-card min-w-[8rem] rounded-lg border border-line bg-surface px-3.5 py-2.5 transition hover:border-accent/40 ${dimCls(
               active,
               s.categoryIds,
             )}`}
           >
             <div className="flex items-baseline justify-between gap-4 font-mono text-xs">
-              <span className="text-slate-200">
+              <span className="text-ink">
                 {s.icon && <span className="mr-1.5">{s.icon}</span>}
                 {s.name}
               </span>
               {s.level > 0 && <span className="text-accent">{s.level}</span>}
             </div>
             {s.level > 0 && (
-              <div className="mt-2 h-0.5 overflow-hidden rounded bg-white/10">
+              <div className="mt-2 h-0.5 overflow-hidden rounded bg-ink/10">
                 <div
                   className="h-full rounded bg-accent transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(0, s.level))}%` }}
@@ -114,13 +114,13 @@ export function CertificationsSection({
               key={c.id}
               type="button"
               onClick={() => setSelected(c)}
-              className={`theme-card group block overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] text-left transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_48px_-12px_rgb(var(--accent)/0.3)] ${dimCls(
+              className={`theme-card group block overflow-hidden rounded-xl border border-line bg-surface text-left transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_48px_-12px_rgb(var(--accent)/0.3)] ${dimCls(
                 active,
                 c.categoryIds,
               )}`}
             >
               {cover && (
-                <div className="overflow-hidden bg-[#0d0d13]">
+                <div className="overflow-hidden bg-bg">
                   <img
                     src={cover}
                     alt={c.title}
@@ -130,8 +130,8 @@ export function CertificationsSection({
                 </div>
               )}
               <div className="p-4">
-                <h3 className="theme-heading font-semibold text-white">{c.title}</h3>
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+                <h3 className="theme-heading font-semibold text-ink">{c.title}</h3>
+                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-faint">
                   {c.issuer}
                   {c.issuedOn && ` · ${monthYear(c.issuedOn)}`}
                 </p>
@@ -148,7 +148,6 @@ export function CertificationsSection({
 
 function CertModal({ cert, onClose }: { cert: Certification; onClose: () => void }) {
   const cover = certCover(cert)
-  // unique image list: cover first, then any extras
   const images = [cover, ...cert.images.map((i) => i.url)].filter(
     (u, i, arr): u is string => !!u && arr.indexOf(u) === i,
   )
@@ -157,7 +156,7 @@ function CertModal({ cert, onClose }: { cert: Certification; onClose: () => void
     <Modal
       title={cert.title}
       subtitle={
-        <p className="font-mono text-xs text-slate-400">
+        <p className="font-mono text-xs text-muted">
           <span className="text-accent">{cert.issuer}</span>
           {cert.issuedOn && ` · issued ${monthYear(cert.issuedOn)}`}
           {cert.expiresOn && ` · expires ${monthYear(cert.expiresOn)}`}
@@ -165,7 +164,7 @@ function CertModal({ cert, onClose }: { cert: Certification; onClose: () => void
       }
       onClose={onClose}
     >
-      {cert.description && <p className="mt-4 text-slate-300">{cert.description}</p>}
+      {cert.description && <p className="mt-4 text-muted">{cert.description}</p>}
 
       {images.length > 0 && (
         <div className="mt-5 space-y-3">
@@ -174,7 +173,7 @@ function CertModal({ cert, onClose }: { cert: Certification; onClose: () => void
               key={src}
               src={src}
               alt={cert.title}
-              className="max-h-[65vh] w-full rounded-xl border border-white/10 object-contain"
+              className="max-h-[65vh] w-full rounded-xl border border-line object-contain"
             />
           ))}
         </div>
@@ -215,21 +214,21 @@ export function AchievementsSection({
             <button
               type="button"
               onClick={() => setSelected(a)}
-              className={`theme-card block w-full rounded-xl border border-white/10 bg-white/[0.02] p-4 text-left transition hover:border-accent/60 ${dimCls(
+              className={`theme-card block w-full rounded-xl border border-line bg-surface p-4 text-left transition hover:border-accent/60 ${dimCls(
                 active,
                 a.categoryIds,
               )}`}
             >
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="font-semibold text-white">{a.title}</h3>
+                <h3 className="font-semibold text-ink">{a.title}</h3>
                 {a.achievedOn && (
-                  <span className="shrink-0 font-mono text-xs text-slate-500">
+                  <span className="shrink-0 font-mono text-xs text-faint">
                     {monthYear(a.achievedOn)}
                   </span>
                 )}
               </div>
               {a.description && (
-                <p className="mt-1 line-clamp-2 text-sm text-slate-400">{a.description}</p>
+                <p className="mt-1 line-clamp-2 text-sm text-muted">{a.description}</p>
               )}
             </button>
           </li>
@@ -241,15 +240,13 @@ export function AchievementsSection({
           title={selected.title}
           subtitle={
             selected.achievedOn && (
-              <span className="font-mono text-xs text-slate-500">
-                {monthYear(selected.achievedOn)}
-              </span>
+              <span className="font-mono text-xs text-faint">{monthYear(selected.achievedOn)}</span>
             )
           }
           onClose={() => setSelected(null)}
         >
           {selected.description && (
-            <p className="mt-4 whitespace-pre-wrap text-slate-300">{selected.description}</p>
+            <p className="mt-4 whitespace-pre-wrap text-muted">{selected.description}</p>
           )}
         </Modal>
       )}
@@ -260,7 +257,6 @@ export function AchievementsSection({
 /* ── Résumé bar ─────────────────────────────────────────── */
 
 export function ResumeBar({ resumes, active }: { resumes: Resume[]; active: string }) {
-  // On ALL show the main resume; on a category show that category's resume.
   const resume =
     active === ALL
       ? resumes.find((r) => r.isMain) ?? resumes[0]
@@ -284,7 +280,7 @@ export function ResumeBar({ resumes, active }: { resumes: Resume[]; active: stri
 /* ── Timeline (education + experience) ──────────────────── */
 
 function Timeline({ children }: { children: ReactNode }) {
-  return <ol className="relative space-y-10 border-l border-white/10 pl-8">{children}</ol>
+  return <ol className="relative space-y-10 border-l border-line pl-8">{children}</ol>
 }
 
 function TimelineItem({
@@ -302,11 +298,11 @@ function TimelineItem({
     <li className="relative">
       <span
         aria-hidden
-        className="absolute -left-[37px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-accent bg-[#0a0a0e]"
+        className="absolute -left-[37px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-accent bg-bg"
       />
       {period && <p className="font-mono text-xs text-accent">{period}</p>}
-      <h3 className="theme-heading mt-1 text-lg font-semibold text-white">{heading}</h3>
-      {sub && <p className="mt-0.5 text-sm text-slate-400">{sub}</p>}
+      <h3 className="theme-heading mt-1 text-lg font-semibold text-ink">{heading}</h3>
+      {sub && <p className="mt-0.5 text-sm text-muted">{sub}</p>}
       {children}
     </li>
   )
@@ -325,14 +321,12 @@ export function EducationSection({ education, no }: { education: Education[]; no
             sub={
               <>
                 {[e.degree, e.field].filter(Boolean).join(', ')}
-                {e.location && (
-                  <span className="font-mono text-xs text-slate-500"> · {e.location}</span>
-                )}
+                {e.location && <span className="font-mono text-xs text-faint"> · {e.location}</span>}
               </>
             }
           >
             {e.description && (
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{e.description}</p>
+              <p className="mt-2 text-sm leading-relaxed text-faint">{e.description}</p>
             )}
           </TimelineItem>
         ))}
@@ -353,20 +347,20 @@ export function ExperienceSection({ experience, no }: { experience: Experience[]
             heading={
               <>
                 {e.role}
-                {e.company && <span className="text-slate-400"> · {e.company}</span>}
+                {e.company && <span className="text-muted"> · {e.company}</span>}
               </>
             }
             sub={e.location && <span className="font-mono text-xs">{e.location}</span>}
           >
             {e.description && (
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">{e.description}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{e.description}</p>
             )}
             {e.referenceUrl && (
               <a
                 href={e.referenceUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex items-center gap-2 rounded border border-white/10 px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-400 transition hover:border-accent hover:text-accent"
+                className="mt-3 inline-flex items-center gap-2 rounded border border-line px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted transition hover:border-accent hover:text-accent"
               >
                 📄 {e.referenceLabel || 'Reference letter'}
               </a>
@@ -381,7 +375,7 @@ export function ExperienceSection({ experience, no }: { experience: Experience[]
 /* ── Contact ────────────────────────────────────────────── */
 
 const fieldCls =
-  'w-full rounded-lg border border-white/10 bg-white/[0.02] px-4 py-3 text-white placeholder:text-slate-600 outline-none transition focus:border-accent'
+  'w-full rounded-lg border border-line bg-surface px-4 py-3 text-ink placeholder:text-faint outline-none transition focus:border-accent'
 
 export function ContactSection({ email, no }: { email: string; no?: string }) {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })

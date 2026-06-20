@@ -2,14 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme tokens ────────────────────────────────────────
+   --accent flips per active profile; the surface tokens flip
+   per light/dark (data-mode on <html>). */
 :root {
-  /* accent as space-separated RGB so tailwind alpha modifiers work */
   --accent: 129 140 248;
+
+  /* dark (default) */
+  --bg: 10 10 14;
+  --surface: 20 20 27;
+  --line: 38 38 47;
+  --ink: 241 245 249;
+  --muted: 148 163 184;
+  --faint: 100 116 139;
+  --dot: 255 255 255;
+  --grain: 0.05;
+}
+
+[data-mode='light'] {
+  --bg: 246 247 250;
+  --surface: 255 255 255;
+  --line: 226 228 234;
+  --ink: 15 23 42;
+  --muted: 71 85 105;
+  --faint: 148 163 184;
+  --dot: 15 23 42;
+  --grain: 0.035;
 }
 
 html {
-  color-scheme: dark;
   scroll-behavior: smooth;
+}
+html[data-mode='light'] {
+  color-scheme: light;
+}
+html:not([data-mode='light']) {
+  color-scheme: dark;
 }
 
 html,
@@ -19,32 +47,31 @@ body,
 }
 
 body {
-  @apply bg-[#0a0a0e] text-slate-200 antialiased;
+  @apply bg-bg text-ink antialiased;
   font-family: Inter, system-ui, -apple-system, sans-serif;
-  /* layered: soft accent glow (follows the active profile) + dot grid */
   background-image:
     radial-gradient(70rem 50rem at 80% -20%, rgb(var(--accent) / 0.1), transparent 60%),
-    radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    radial-gradient(rgb(var(--dot) / 0.05) 1px, transparent 1px);
   background-size: auto, 26px 26px;
   background-attachment: fixed;
-  transition: background-color 0.4s ease;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-/* film grain — sits above content, below modals; purely decorative */
+/* film grain */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: var(--grain);
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {
   background: rgb(var(--accent) / 0.4);
-  color: white;
+  color: rgb(var(--ink));
 }
 
 ::-webkit-scrollbar {
@@ -54,7 +81,7 @@ body::after {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(var(--ink) / 0.18);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -71,18 +98,17 @@ body::after {
   @apply font-mono text-[11px] uppercase tracking-[0.25em] text-accent;
 }
 
-/* markdown body (project/cert descriptions) */
 .md {
-  @apply space-y-3 leading-relaxed text-slate-300;
+  @apply space-y-3 leading-relaxed text-muted;
 }
 .md strong {
-  @apply text-white;
+  @apply text-ink;
 }
 .md a {
   @apply text-accent underline underline-offset-4;
 }
 .md code {
-  @apply rounded bg-white/5 px-1.5 py-0.5 font-mono text-[0.85em] text-accent;
+  @apply rounded bg-ink/5 px-1.5 py-0.5 font-mono text-[0.85em] text-accent;
 }
 .md ul {
   @apply list-disc space-y-1.5 pl-5;
@@ -93,10 +119,9 @@ body::after {
 .md h1,
 .md h2,
 .md h3 {
-  @apply font-display text-white;
+  @apply font-display text-ink;
 }
 
-/* blinking terminal cursor (hero headline) */
 @keyframes blink {
   0%, 55% { opacity: 1; }
   56%, 100% { opacity: 0; }
@@ -105,7 +130,6 @@ body::after {
   animation: blink 1.1s steps(1) infinite;
 }
 
-/* modal entrance */
 @keyframes modal-in {
   from {
     opacity: 0;
@@ -116,7 +140,6 @@ body::after {
   animation: modal-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* 3D wrapper for the dice/profile transition */
 .scene {
   perspective: 1600px;
 }
@@ -127,8 +150,8 @@ body::after {
 [data-theme='pixel'] body {
   background-image:
     radial-gradient(70rem 50rem at 80% -20%, rgb(var(--accent) / 0.1), transparent 60%),
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(rgb(var(--dot) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--dot) / 0.05) 1px, transparent 1px);
   background-size: auto, 24px 24px, 24px 24px;
 }
 [data-theme='pixel'] .theme-heading {
@@ -144,10 +167,7 @@ body::after {
   image-rendering: pixelated;
 }
 
-/* Research: academic paper flavour — warm tint + serif headings */
-[data-theme='research'] body {
-  background-color: #0b0a08;
-}
+/* Research: academic paper flavour — serif headings */
 [data-theme='research'] .theme-heading {
   @apply font-serifResearch;
   font-weight: 600;

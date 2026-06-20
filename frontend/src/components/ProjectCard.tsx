@@ -8,6 +8,10 @@ function orderedImages(p: Project): string[] {
   return [cover.url, ...p.images.filter((i) => i.id !== cover.id).map((i) => i.url)]
 }
 
+function hasLiveDemo(p: Project): boolean {
+  return p.demoType !== 'none' && !!p.demoUrl
+}
+
 export default function ProjectCard({
   project,
   dimmed = false,
@@ -21,7 +25,6 @@ export default function ProjectCard({
   const [idx, setIdx] = useState(0)
   const timer = useRef<number | undefined>(undefined)
 
-  // On hover, cycle through the project's images; reset to the cover on leave.
   const startCycle = () => {
     if (images.length > 1 && timer.current === undefined) {
       timer.current = window.setInterval(() => setIdx((i) => (i + 1) % images.length), 1200)
@@ -48,12 +51,12 @@ export default function ProjectCard({
       onMouseEnter={startCycle}
       onMouseLeave={stopCycle}
       className={[
-        'theme-card group relative block w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] text-left transition-all duration-300',
+        'theme-card group relative block w-full overflow-hidden rounded-xl border border-line bg-surface text-left transition-all duration-300',
         'hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_48px_-12px_rgb(var(--accent)/0.3)]',
         dimmed ? 'opacity-40 hover:opacity-100' : 'opacity-100',
       ].join(' ')}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-[#0d0d13]">
+      <div className="relative aspect-video w-full overflow-hidden bg-bg">
         {images.length > 0 ? (
           <img
             src={images[idx]}
@@ -62,10 +65,22 @@ export default function ProjectCard({
             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-widest text-slate-600">
+          <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-widest text-faint">
             no image
           </div>
         )}
+
+        {/* live-demo badge */}
+        {hasLiveDemo(project) && (
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-300 backdrop-blur">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            Live
+          </span>
+        )}
+
         {images.length > 1 && (
           <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
             {images.map((_, i) => (
@@ -87,26 +102,22 @@ export default function ProjectCard({
             ★ Featured
           </p>
         )}
-        <h3 className="theme-heading text-lg font-semibold text-white">{project.title}</h3>
+        <h3 className="theme-heading text-lg font-semibold text-ink">{project.title}</h3>
         {project.summary && (
-          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-400">
-            {project.summary}
-          </p>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted">{project.summary}</p>
         )}
         {project.tech.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
             {project.tech.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-500"
+                className="rounded border border-line px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-faint"
               >
                 {t}
               </span>
             ))}
             {project.tech.length > 4 && (
-              <span className="px-1 font-mono text-[10px] text-slate-600">
-                +{project.tech.length - 4}
-              </span>
+              <span className="px-1 font-mono text-[10px] text-faint">+{project.tech.length - 4}</span>
             )}
           </div>
         )}
