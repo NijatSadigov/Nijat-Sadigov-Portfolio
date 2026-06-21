@@ -14,6 +14,7 @@ import type {
   Skill,
 } from '../types'
 import Modal from './Modal'
+import Reveal from './Reveal'
 
 export function SectionShell({
   no,
@@ -28,13 +29,15 @@ export function SectionShell({
 }) {
   return (
     <section className="mx-auto mt-20 max-w-6xl px-6">
-      <div className="mb-7 flex items-baseline gap-4">
-        {no && <span className="font-mono text-xs text-accent">{no}</span>}
-        <h2 className="theme-heading text-3xl font-bold text-ink">{title}</h2>
-        {meta && <span className="font-mono text-xs text-faint">{meta}</span>}
-        <span aria-hidden className="h-px flex-1 self-center bg-line" />
-      </div>
-      {children}
+      <Reveal>
+        <div className="mb-7 flex items-baseline gap-4">
+          {no && <span className="font-mono text-xs text-accent">{no}</span>}
+          <h2 className="theme-heading text-3xl font-bold text-ink">{title}</h2>
+          {meta && <span className="font-mono text-xs text-faint">{meta}</span>}
+          <span aria-hidden className="h-px flex-1 self-center bg-line" />
+        </div>
+        {children}
+      </Reveal>
     </section>
   )
 }

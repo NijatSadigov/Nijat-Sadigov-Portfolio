@@ -502,7 +502,8 @@ export function MessagesAdmin() {
 // ── Profile & social links ──
 
 const emptyProfile: Profile = {
-  fullName: '', headline: '', bio: '', photoUrl: '', email: '', phone: '', location: '', updatedAt: '',
+  fullName: '', headline: '', bio: '', photoUrl: '', email: '', phone: '', location: '',
+  openToWork: false, updatedAt: '',
 }
 
 export function ProfileAdmin() {
@@ -564,6 +565,14 @@ export function ProfileAdmin() {
               </label>
             </div>
           </Field>
+          <label className="flex items-center gap-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={profile.openToWork}
+              onChange={(e) => setProfile({ ...profile, openToWork: e.target.checked })}
+            />
+            Show “Open to work” badge in the hero
+          </label>
           <Btn type="submit">Save profile</Btn>
         </form>
       </Panel>

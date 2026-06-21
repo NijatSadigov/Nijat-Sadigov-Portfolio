@@ -49,6 +49,7 @@ export interface Profile {
   email: string
   phone: string
   location: string
+  openToWork: boolean
   updatedAt: string
 }
 

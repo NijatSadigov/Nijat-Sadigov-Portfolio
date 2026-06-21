@@ -44,6 +44,15 @@ export default function Hero({
   return (
     <header className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-10 px-6 pt-20 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left">
       <div className="max-w-2xl">
+        {profile.openToWork && (
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-emerald-400">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            Open to work
+          </span>
+        )}
         <p className="kicker">Software · Games · Research</p>
 
         <h1 className="theme-heading mt-4 bg-gradient-to-br from-ink via-ink to-[rgb(var(--accent))] bg-clip-text text-5xl font-bold leading-[1.05] tracking-tight text-transparent sm:text-6xl lg:text-7xl">

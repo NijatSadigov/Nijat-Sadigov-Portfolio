@@ -4,14 +4,15 @@ package models
 import "time"
 
 type Profile struct {
-	FullName  string    `json:"fullName"`
-	Headline  string    `json:"headline"`
-	Bio       string    `json:"bio"`
-	PhotoURL  string    `json:"photoUrl"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	Location  string    `json:"location"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	FullName   string    `json:"fullName"`
+	Headline   string    `json:"headline"`
+	Bio        string    `json:"bio"`
+	PhotoURL   string    `json:"photoUrl"`
+	Email      string    `json:"email"`
+	Phone      string    `json:"phone"`
+	Location   string    `json:"location"`
+	OpenToWork bool      `json:"openToWork"`
+	UpdatedAt  time.Time `json:"updatedAt"`
 }
 
 type SocialLink struct {
