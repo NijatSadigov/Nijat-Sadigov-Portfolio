@@ -53,11 +53,20 @@ services:
     expose:
       - "8090"
 
+  # Static demo: PDDL Playground (built from its own public repo).
+  pddl:
+    build:
+      context: ./pddl
+    restart: unless-stopped
+    expose:
+      - "80"
+
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
     depends_on:
       - api
+      - pddl
     ports:
       - "80:80"
       - "443:443"

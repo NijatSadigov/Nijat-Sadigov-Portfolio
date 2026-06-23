@@ -1,0 +1,15 @@
+# Internal file server for the PDDL Playground static build (no TLS here —
+# the main Caddy terminates HTTPS and reverse-proxies to this on :80).
+# No Content-Security-Policy is set, so the app can fetch the Pyodide runtime
+# and pyperplan wheel from cdn.jsdelivr.net / files.pythonhosted.org at runtime.
+:80 {
+	root * /srv
+	encode zstd gzip
+	try_files {path} /index.html
+	file_server
+
+	# content-hashed assets can be cached hard; keep index.html fresh
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+	header /index.html Cache-Control "no-cache"
+}

@@ -12,7 +12,14 @@
 	reverse_proxy api:8090
 }
 
-# ── Project demo subdomains ─────────────────────────────────────────────
+# ── PDDL Playground demo (pddl.<domain>) ────────────────────────────────
+# Served by the `pddl` container (its own internal Caddy file server). DNS is
+# already covered by the wildcard *.DOMAIN record; HTTPS is automatic.
+pddl.{$DOMAIN} {
+	reverse_proxy pddl:80
+}
+
+# ── More project demo subdomains ────────────────────────────────────────
 # Each demo is its own container/service; point a subdomain at it here.
 # You also need a DNS record for the subdomain (or a wildcard *.DOMAIN) → server IP.
 # Uncomment and adapt one of these per demo, then `docker compose up -d`:
