@@ -6,6 +6,7 @@ import DiceScene, { type DiceDir } from '../components/DiceScene'
 import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 import ProjectGrid from '../components/ProjectGrid'
+import SectionNav, { type NavItem } from '../components/SectionNav'
 import {
   AchievementsSection,
   CertificationsSection,
@@ -71,9 +72,22 @@ export default function Home() {
   const activeName =
     active === ALL ? 'all work' : (site.categories.find((c) => c.id === active)?.name ?? '')
 
+  // Build the section-nav from whatever content actually exists.
+  const navItems: NavItem[] = [
+    { id: 'intro', label: 'Intro' },
+    { id: 'projects', label: 'Projects' },
+    site.skills.length > 0 && { id: 'skills', label: 'Skills' },
+    site.certifications.length > 0 && { id: 'certifications', label: 'Certifications' },
+    site.achievements.length > 0 && { id: 'achievements', label: 'Achievements' },
+    site.education.length > 0 && { id: 'education', label: 'Education' },
+    site.experience.length > 0 && { id: 'experience', label: 'Experience' },
+    { id: 'contact', label: 'Contact' },
+  ].filter(Boolean) as NavItem[]
+
   return (
     <div className="min-h-screen pb-10">
       <TopControls />
+      <SectionNav items={navItems} />
       <Hero profile={site.profile} socialLinks={site.socialLinks} />
 
       <CategoryButtons categories={site.categories} active={active} onSelect={select} />

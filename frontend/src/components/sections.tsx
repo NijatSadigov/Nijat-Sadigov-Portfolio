@@ -28,7 +28,7 @@ export function SectionShell({
   children: ReactNode
 }) {
   return (
-    <section className="mx-auto mt-20 max-w-6xl px-6">
+    <section id={title.toLowerCase()} className="mx-auto mt-20 max-w-6xl scroll-mt-24 px-6">
       <Reveal>
         <div className="mb-7 flex items-baseline gap-4">
           {no && <span className="font-mono text-xs text-accent">{no}</span>}

@@ -42,7 +42,10 @@ export default function Hero({
   socialLinks: SocialLink[]
 }) {
   return (
-    <header className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-10 px-6 pt-20 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left">
+    <header
+      id="intro"
+      className="mx-auto flex max-w-6xl scroll-mt-24 flex-col-reverse items-center gap-10 px-6 pt-20 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left"
+    >
       <div className="max-w-2xl">
         {profile.openToWork && (
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-emerald-400">
