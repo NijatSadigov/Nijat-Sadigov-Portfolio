@@ -19,6 +19,14 @@ pddl.{$DOMAIN} {
 	reverse_proxy pddl:80
 }
 
+# ── NixBall multiplayer game (nixball.<domain>) ─────────────────────────
+# Runs as a host service on :3001; 172.18.0.1 is the docker bridge gateway,
+# which lets this (containerised) Caddy reach the host port.
+nixball.{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy 172.18.0.1:3001
+}
+
 # ── More project demo subdomains ────────────────────────────────────────
 # Each demo is its own container/service; point a subdomain at it here.
 # You also need a DNS record for the subdomain (or a wildcard *.DOMAIN) → server IP.
