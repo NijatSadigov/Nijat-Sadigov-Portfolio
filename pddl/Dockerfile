@@ -10,8 +10,10 @@ RUN apk add --no-cache git
 # Cache-bust: when the repo's main branch moves, this file changes and the
 # clone+build layers below re-run on the next `docker compose build`.
 ADD https://api.github.com/repos/NijatSadigov/pddl-playground/commits/main /tmp/commit.json
+# `npm install` (not `npm ci`): the playground's lock file can drift out of sync
+# (e.g. missing @emnapi/*), and npm ci refuses to install then. install is lenient.
 RUN git clone --depth 1 https://github.com/NijatSadigov/pddl-playground.git . \
- && npm ci \
+ && npm install --no-audit --fund=false \
  && npm run build
 
 # ---------- serve dist/ ----------
