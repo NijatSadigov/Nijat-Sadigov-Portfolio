@@ -26,11 +26,6 @@ uploads/
 # Editor / OS
 .idea/
 .vscode/
+.claude/
 .DS_Store
 Thumbs.db
-
-# Local Claude Code settings (machine-specific)
-.claude/settings.local.json
-
-# Claude Code workspace config
-.claude/
