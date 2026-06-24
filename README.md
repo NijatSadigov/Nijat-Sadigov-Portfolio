@@ -47,8 +47,8 @@ docker compose up -d --build
 Then open `https://localhost`. The admin account is created automatically from
 `ADMIN_EMAIL` / `ADMIN_PASSWORD` on first boot — log in at `/admin/login`.
 
-> **Going live on your real domain?** See **[DEPLOY.md](DEPLOY.md)** for the full
-> walkthrough (VPS, GoDaddy DNS, HTTPS, and demo subdomains).
+> **Production deployment** (VPS, DNS, HTTPS, and demo subdomains) is documented
+> in **[DEPLOY.md](DEPLOY.md)**.
 
 ### 2b. Run natively (fast dev loop)
 

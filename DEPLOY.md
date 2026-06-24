@@ -1,143 +1,104 @@
-# Deploying the portfolio
+# Deployment
 
-You need a domain and a small VPS to run the app, with the domain pointed at the
-server. The whole stack runs with one `docker compose up`. Caddy handles HTTPS
-automatically — free Let's Encrypt certs, auto-renewed, no manual cert work.
+The stack runs as a single Docker Compose project: PostgreSQL, the Go API (which
+also serves the built React site and uploaded files), and Caddy as the reverse
+proxy. Caddy issues and renews Let's Encrypt certificates automatically, so HTTPS
+needs no manual setup.
 
 ```
 Internet ──HTTPS──▶ Caddy (:443) ──▶ Go api (:8090) ──▶ Postgres
                       │                  └ serves the React site + /uploads
-                      └ also routes demo subdomains (snake.yourdomain.com, …)
+                      └ also routes demo subdomains (e.g. snake.example.com)
 ```
 
----
+## Requirements
 
-## Step 1 — Get a server (VPS)
+A Linux server with a public IP and a domain whose DNS points at it. Ubuntu 24.04
+is assumed below. Any small VPS runs the stack unchanged — for reference:
 
-- **Oracle Cloud — Always Free** ($0): an **Ampere A1 (ARM)** instance, up to
-  4 cores / 24 GB RAM, runs this Docker setup. Signup needs a credit card for
-  verification (not charged), and free ARM capacity sometimes makes you retry
-  "Create" a few times. Pick Ubuntu 24.04, give it a public IP, and open ports
-  80/443 in the Security List / VCN ingress rules, not just the OS firewall.
-- **Hetzner Cloud** (~€4/mo): a **CX22**, Ubuntu 24.04.
-- **DigitalOcean** ($6+/mo): use the 2 GB droplet so the build doesn't run out
+- **Oracle Cloud (Always Free)** — an Ampere A1 (ARM) instance, up to 4 cores /
+  24 GB RAM. Signup requires a card for verification (not charged), and free ARM
+  capacity can take a few "Create" retries. Open ports 80/443 in the Security
+  List / VCN ingress rules, not only the OS firewall.
+- **Hetzner Cloud** (~€4/mo) — a CX22.
+- **DigitalOcean** ($6+/mo) — use the 2 GB droplet so the build doesn't run out
   of memory.
 
-Whichever you pick, create it with **Ubuntu 24.04**, and note its **public IP
-address** (e.g. `203.0.113.10`) — you need it in Step 2.
+## 1. DNS
 
----
+At the domain's DNS provider, add two A records pointing at the server's IP:
 
-## Step 2 — Point your GoDaddy domain at the server
+| Type | Name | Value     | Purpose                                            |
+| ---- | ---- | --------- | -------------------------------------------------- |
+| A    | `@`  | server IP | `example.com` → server                             |
+| A    | `*`  | server IP | `anything.example.com` → server (demo subdomains)  |
 
-In GoDaddy: **My Products → your domain → DNS → Manage DNS / DNS Records**.
+The wildcard record resolves every `*.example.com` to the server, so demo
+subdomains work without a record per demo. Propagation takes minutes to a few
+hours; verify with `nslookup example.com`.
 
-Add these **A records** (delete any conflicting default `@`/parking records):
-
-| Type | Name | Value (Data)        | TTL   | What it does                    |
-| ---- | ---- | ------------------- | ----- | ------------------------------- |
-| A    | `@`  | your server IP      | 1 hr  | `yourdomain.com` → server       |
-| A    | `*`  | your server IP      | 1 hr  | `anything.yourdomain.com` → server (for demo subdomains) |
-
-> The `*` (wildcard) record is what makes the **subdomain-per-demo** idea work —
-> every `something.yourdomain.com` resolves to your server, and Caddy decides
-> what each one serves.
-
-DNS changes can take a few minutes to a couple of hours to propagate. Check with
-`nslookup yourdomain.com` — it should return your server IP.
-
----
-
-## Step 3 — Install Docker on the server
-
-SSH in (`ssh root@your-server-ip`) and run:
+## 2. Install Docker
 
 ```bash
 curl -fsSL https://get.docker.com | sh
-# (optional) basic firewall
+# optional firewall
 ufw allow OpenSSH && ufw allow 80 && ufw allow 443 && ufw --force enable
 ```
 
----
-
-## Step 4 — Get the code and configure it
+## 3. Configure
 
 ```bash
-# put the project on the server (git clone, or scp/rsync it up)
-git clone <your-repo-url> portfolio && cd portfolio
-
+git clone <repo-url> portfolio && cd portfolio
 cp .env.example .env
-nano .env
 ```
 
-In `.env`, set **at minimum**:
+Set at least the following in `.env`:
 
 ```ini
-DOMAIN=yourdomain.com                 # your real domain (no http://)
+DOMAIN=example.com                    # real domain, no scheme
 POSTGRES_PASSWORD=<long random>
-JWT_SECRET=<long random string>       # e.g. `openssl rand -hex 32`
-ADMIN_EMAIL=you@example.com
-ADMIN_PASSWORD=<a strong password>
+JWT_SECRET=<long random>              # e.g. openssl rand -hex 32
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=<strong password>
 ```
 
-`CORS_ORIGIN` and `PUBLIC_BASE_URL` are derived from `DOMAIN` automatically in
-Docker — you don't need to touch them.
+`CORS_ORIGIN` and `PUBLIC_BASE_URL` are derived from `DOMAIN` in Docker.
 
----
-
-## Step 5 — Launch
+## 4. Launch
 
 ```bash
 docker compose up -d --build
 ```
 
-That builds the React site, builds the Go binary, starts Postgres, runs database
-migrations + seeds the categories, and starts Caddy. Caddy fetches an HTTPS cert
-for your domain on first boot (give it ~30 seconds).
+This builds the React site and Go binary, starts Postgres, runs migrations and
+seeds categories, and starts Caddy. Caddy obtains the certificate on first boot.
+The site is served at `https://example.com`; the admin panel is at `/admin/login`
+using the configured `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 
-Visit **https://yourdomain.com** — you're live.
-
-Log in at **https://yourdomain.com/admin/login** with your `ADMIN_EMAIL` /
-`ADMIN_PASSWORD`, then fill in your content.
-
-Useful commands:
+Common commands:
 
 ```bash
-docker compose logs -f caddy   # watch cert issuance / routing
+docker compose logs -f caddy   # cert issuance / routing
 docker compose logs -f api     # backend logs
 docker compose up -d --build   # redeploy after pulling new code
-docker compose down            # stop everything (data is kept in volumes)
+docker compose down            # stop (volumes retain data)
 ```
 
----
+## Demo subdomains
 
-## Adding project demos on subdomains
+Each `*.example.com` already resolves to the server via the wildcard record, so a
+demo needs only a Caddy block; Caddy issues its certificate automatically.
 
-Goal: `snake.yourdomain.com` shows your Snake game, etc. Thanks to the `*` DNS
-record (Step 2), the subdomain already points at your server — you just tell
-Caddy what to serve and Caddy auto-issues its HTTPS cert.
-
-There are two common shapes:
-
-### A) The demo is its own app/container
-
-Add the demo as a service in `docker-compose.yml`, then add a block to the
-`Caddyfile`:
+A containerised demo — add it as a service in `docker-compose.yml` and route to it
+by service name:
 
 ```caddy
 snake.{$DOMAIN} {
-    reverse_proxy snake-game:3000   # service name : its internal port
+    reverse_proxy snake-game:3000
 }
 ```
 
-```bash
-docker compose up -d   # picks up the new service + Caddy route
-```
-
-### B) The demo is a static / WASM build (e.g. a web or Unity game)
-
-Put the build in a folder the Caddy container can see (e.g. mount
-`./demos/snake` into the container at `/srv/demos/snake`), then:
+A static or WASM build — mount the build into the Caddy container and serve it:
 
 ```caddy
 snake.{$DOMAIN} {
@@ -147,28 +108,20 @@ snake.{$DOMAIN} {
 }
 ```
 
-Either way: edit the `Caddyfile`, run `docker compose up -d`, done — HTTPS and
-routing are automatic. In your portfolio admin, just set that project's **Demo
-URL** to `https://snake.yourdomain.com`.
+After editing the `Caddyfile`, run `docker compose up -d`, then set the project's
+demo URL in the admin to the new subdomain.
 
----
+## Maintenance
 
-## Maintenance notes
+- **Backups** — data lives in two Docker volumes, `pgdata` (database) and
+  `uploads` (résumés, certs, images). Back them up periodically, e.g.
+  `docker run --rm -v portfolio_pgdata:/v -v $PWD:/b alpine tar czf /b/db.tgz /v`.
+- **Updates** — `git pull && docker compose up -d --build`.
+- **`www`** — to redirect `www.example.com` to the apex, add a `www` A record and
+  a Caddy block: `www.{$DOMAIN} { redir https://{$DOMAIN}{uri} permanent }`.
 
-- **Backups**: your data lives in two Docker volumes — `pgdata` (database) and
-  `uploads` (résumés, certs, images). Back these up periodically
-  (`docker run --rm -v portfolio_pgdata:/v -v $PWD:/b alpine tar czf /b/db.tgz /v`).
-- **Updates**: `git pull && docker compose up -d --build`.
-- **`www`**: if you want `www.yourdomain.com` too, add an A record for `www` and
-  a redirect block in the `Caddyfile`:
-  `www.{$DOMAIN} { redir https://{$DOMAIN}{uri} permanent }`.
+## PaaS alternative
 
----
-
-## Simpler alternative (no VPS)
-
-If you'd rather not manage a server, you can deploy the same Docker setup to a
-PaaS like **Render**, **Railway**, or **Fly.io** with a managed Postgres add-on,
-and point GoDaddy at their hostname with a CNAME. It's easier to start but gives
-you less control over arbitrary demo subdomains — the VPS route above is the best
-fit for your subdomain plan.
+The same Compose setup can run on a managed platform (Render, Railway, Fly.io)
+with a managed Postgres add-on, pointing DNS at the platform hostname via CNAME.
+This trades away straightforward control over arbitrary demo subdomains.
