@@ -16,4 +16,10 @@ nixball.{$DOMAIN} {
 	reverse_proxy 172.18.0.1:3001
 }
 
+# ── Epistemic solver for the PDDL Playground (epistemic.<domain>) ────────
+epistemic.{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy pdkb-epistemic:8000
+}
+
 # ── More project demo subdomains ────────────────────────────────────────
