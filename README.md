@@ -79,7 +79,7 @@ Open `http://localhost:5173`. Admin: `http://localhost:5173/admin/login`.
 - **Images**: each project/cert can have many; one is flagged `is_cover` for the
   card. Uploads are stored on disk (`UPLOAD_DIR`) and served from `/uploads/...`.
 
-## API surface (so far)
+## API surface
 
 ```
 GET  /api/health
@@ -114,11 +114,9 @@ DELETE /api/admin/project-images/{id}
 
 Anything marked **Draft** stays hidden on the public site until you publish it.
 
-## Status — complete & verified end-to-end
+## Features
 
-✅ All content types (projects, certifications, skills, achievements, education,
-experience, résumés, contact) with public display + full admin CRUD.
-✅ Homepage: hero, ALL/Game/Software/Research switch with the 3D dice roll,
-per-profile theming (pixel-art for game dev), and category highlighting.
-✅ Verified against a live PostgreSQL: migrations, seed, JWT login, project
-creation, public filtering, and the dice/theme switch all working.
+- All content types (projects, certifications, skills, achievements, education,
+  experience, résumés, contact) have public display and full admin CRUD.
+- Homepage with hero, ALL/Game/Software/Research switching via the 3D dice roll,
+  per-profile theming (pixel-art for game dev), and category highlighting.
