@@ -26,7 +26,6 @@ func (s *Store) ListSocialLinks(ctx context.Context) ([]models.SocialLink, error
 	return links, rows.Err()
 }
 
-// ReplaceSocialLinks swaps the full set of links in one transaction.
 func (s *Store) ReplaceSocialLinks(ctx context.Context, links []models.SocialLink) error {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {

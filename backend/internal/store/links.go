@@ -7,8 +7,6 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// loadCategoryLinks returns entityID → []categoryID for a M2M join table.
-// joinTable/fkCol are code constants (never user input), so formatting is safe.
 func (s *Store) loadCategoryLinks(ctx context.Context, joinTable, fkCol string, ids []string) (map[string][]string, error) {
 	out := map[string][]string{}
 	if len(ids) == 0 {

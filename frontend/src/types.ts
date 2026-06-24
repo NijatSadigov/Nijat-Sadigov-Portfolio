@@ -1,4 +1,3 @@
-// Shapes mirror the Go API JSON responses.
 
 export interface Category {
   id: string
@@ -173,5 +172,4 @@ export interface LoginResponse {
   user: AuthUser
 }
 
-// Special pseudo-category id for the "ALL" view.
 export const ALL = 'all'

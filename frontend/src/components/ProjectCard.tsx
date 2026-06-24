@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Project } from '../types'
 
-// Cover image first, then the rest — used for the inline hover gallery.
 function orderedImages(p: Project): string[] {
   const cover = p.images.find((i) => i.isCover) ?? p.images[0]
   if (!cover) return []
@@ -70,7 +69,6 @@ export default function ProjectCard({
           </div>
         )}
 
-        {/* live-demo badge */}
         {hasLiveDemo(project) && (
           <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-300 backdrop-blur">
             <span className="relative flex h-1.5 w-1.5">

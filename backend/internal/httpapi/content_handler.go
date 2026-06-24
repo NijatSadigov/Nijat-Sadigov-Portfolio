@@ -10,7 +10,6 @@ import (
 	"portfolio/internal/store"
 )
 
-// notFoundOr writes 404 for ErrNotFound, 500 otherwise; returns true if it wrote.
 func notFoundOr(w http.ResponseWriter, err error, msg string) bool {
 	if err == nil {
 		return false

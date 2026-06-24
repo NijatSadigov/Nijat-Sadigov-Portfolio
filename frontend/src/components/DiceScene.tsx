@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 
 export type DiceDir = 'up' | 'down' | 'left' | 'right' | 'down-left' | 'down-right'
 
-// The rotation the new face starts from before it rolls into place.
 function enterRotation(dir: DiceDir) {
   let rotateX = 0
   let rotateY = 0
@@ -14,11 +13,6 @@ function enterRotation(dir: DiceDir) {
   return { rotateX, rotateY }
 }
 
-/**
- * Rolls its children in like a face of a die whenever `sceneKey` changes.
- * Uses a key-remount (no AnimatePresence) so it can't deadlock on an exit
- * animation — every profile switch mounts a fresh face that rotates into view.
- */
 export default function DiceScene({
   sceneKey,
   direction,

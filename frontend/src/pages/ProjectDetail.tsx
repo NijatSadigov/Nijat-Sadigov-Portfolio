@@ -21,7 +21,6 @@ export default function ProjectDetail() {
       .catch((e) => setError(e.message))
   }, [slug])
 
-  // Per-page title for SEO / shared links.
   useEffect(() => {
     if (project) document.title = `${project.title} — Nijat Sadigov`
     return () => {

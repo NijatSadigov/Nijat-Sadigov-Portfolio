@@ -10,7 +10,6 @@ import (
 	"portfolio/internal/store"
 )
 
-// GET /api/projects?category={id}  — public: published only.
 func (s *Server) handleListProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := s.store.ListProjects(r.Context(), store.ProjectFilter{
 		PublishedOnly: true,
@@ -23,7 +22,6 @@ func (s *Server) handleListProjects(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, projects)
 }
 
-// GET /api/projects/{slug} — public detail.
 func (s *Server) handleGetProject(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 	p, err := s.store.GetProjectBySlug(r.Context(), slug)
@@ -38,7 +36,6 @@ func (s *Server) handleGetProject(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, p)
 }
 
-// POST /api/projects/{slug}/view — public view counter.
 func (s *Server) handleProjectView(w http.ResponseWriter, r *http.Request) {
 	if err := s.store.IncrementProjectView(r.Context(), chi.URLParam(r, "slug")); err != nil {
 		writeError(w, http.StatusInternalServerError, "could not record view")
@@ -49,7 +46,6 @@ func (s *Server) handleProjectView(w http.ResponseWriter, r *http.Request) {
 
 // ── admin ────────────────────────────────────────────────────
 
-// GET /api/admin/projects — includes drafts.
 func (s *Server) handleAdminListProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := s.store.ListProjects(r.Context(), store.ProjectFilter{PublishedOnly: false})
 	if err != nil {

@@ -1,6 +1,5 @@
-// Applies the active profile's accent colour + theme flavour to the document.
 
-/** Convert "#6366f1" → "99 102 241" for the --accent CSS variable. */
+
 export function hexToRgbTriple(hex: string): string {
   const m = hex.replace('#', '')
   const full = m.length === 3 ? m.split('').map((c) => c + c).join('') : m

@@ -8,7 +8,6 @@ import (
 	"portfolio/internal/store"
 )
 
-// GET /api/site — everything the public homepage needs, in one payload.
 func (s *Server) handleGetSite(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -41,7 +40,6 @@ func (s *Server) handleGetSite(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// POST /api/contact — public contact form submission.
 func (s *Server) handleContact(w http.ResponseWriter, r *http.Request) {
 	var in models.ContactInput
 	if err := decodeJSON(r, &in); err != nil {

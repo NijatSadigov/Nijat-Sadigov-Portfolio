@@ -32,10 +32,9 @@ func scanProject(row pgx.Row) (*models.Project, error) {
 	return &p, nil
 }
 
-// ProjectFilter narrows the public/admin project list.
 type ProjectFilter struct {
 	PublishedOnly bool
-	CategoryID    string // optional: only projects tagged with this category
+	CategoryID    string
 }
 
 func (s *Store) ListProjects(ctx context.Context, f ProjectFilter) ([]models.Project, error) {
@@ -107,7 +106,6 @@ func (s *Store) getProjectWhere(ctx context.Context, where string, arg any) (*mo
 	return p, nil
 }
 
-// loadProjectRelations batch-loads categories, images, and tech for the given projects.
 func (s *Store) loadProjectRelations(ctx context.Context, projects []*models.Project) error {
 	if len(projects) == 0 {
 		return nil
@@ -119,7 +117,6 @@ func (s *Store) loadProjectRelations(ctx context.Context, projects []*models.Pro
 		ids = append(ids, p.ID)
 	}
 
-	// categories
 	catRows, err := s.pool.Query(ctx,
 		`SELECT project_id, category_id FROM project_categories WHERE project_id = ANY($1)`, ids)
 	if err != nil {
@@ -140,7 +137,6 @@ func (s *Store) loadProjectRelations(ctx context.Context, projects []*models.Pro
 		return err
 	}
 
-	// images
 	imgRows, err := s.pool.Query(ctx,
 		`SELECT id, project_id, url, caption, is_cover, sort_order
 		 FROM project_images WHERE project_id = ANY($1)
@@ -164,7 +160,6 @@ func (s *Store) loadProjectRelations(ctx context.Context, projects []*models.Pro
 		return err
 	}
 
-	// tech
 	techRows, err := s.pool.Query(ctx,
 		`SELECT project_id, name FROM project_tech WHERE project_id = ANY($1)
 		 ORDER BY sort_order, id`, ids)
@@ -293,7 +288,6 @@ func (s *Store) DeleteProjectImage(ctx context.Context, imageID string) error {
 	return nil
 }
 
-// SetProjectCover marks one image as the cover and clears the others for that project.
 func (s *Store) SetProjectCover(ctx context.Context, projectID, imageID string) error {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {

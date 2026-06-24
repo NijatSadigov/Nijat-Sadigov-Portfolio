@@ -35,7 +35,6 @@ export default function Home() {
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'))
   }, [])
 
-  // Shift accent + theme flavour to match the active profile.
   useEffect(() => {
     if (!site) return
     if (active === ALL) {
@@ -72,7 +71,6 @@ export default function Home() {
   const activeName =
     active === ALL ? 'all work' : (site.categories.find((c) => c.id === active)?.name ?? '')
 
-  // Build the section-nav from whatever content actually exists.
   const navItems: NavItem[] = [
     { id: 'intro', label: 'Intro' },
     { id: 'projects', label: 'Projects' },
@@ -94,7 +92,6 @@ export default function Home() {
 
       <ResumeBar resumes={site.resumes} active={active} />
 
-      {/* Category-dependent content rotates like a die when the profile changes. */}
       <DiceScene sceneKey={active} direction={direction}>
         <SectionShell no="01" title="Projects" meta={`/ ${activeName.toLowerCase()}`}>
           <ProjectGrid projects={site.projects} active={active} />
@@ -105,7 +102,6 @@ export default function Home() {
         <AchievementsSection no="04" achievements={site.achievements} active={active} />
       </DiceScene>
 
-      {/* Global sections (same across all profiles). */}
       <EducationSection no="05" education={site.education} />
       <ExperienceSection no="06" experience={site.experience} />
       <ContactSection no="07" email={site.profile.email} />

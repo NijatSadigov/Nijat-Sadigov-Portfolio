@@ -1,4 +1,3 @@
-// Package config loads runtime configuration from environment variables.
 package config
 
 import (
@@ -14,14 +13,13 @@ type Config struct {
 	CORSOrigins   []string
 	UploadDir     string
 	PublicBaseURL string
-	StaticDir     string // built SPA to serve; empty = don't serve a frontend
+	StaticDir     string
 
 	AdminEmail    string
 	AdminPassword string
 	AdminName     string
 }
 
-// Load reads config from the environment, applying sensible defaults for local dev.
 func Load() (*Config, error) {
 	c := &Config{
 		Port:          env("PORT", "8080"),

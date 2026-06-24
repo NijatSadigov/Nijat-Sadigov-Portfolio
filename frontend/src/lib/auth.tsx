@@ -14,7 +14,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authed, setAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // Validate any stored token on mount.
   useEffect(() => {
     const t = token.get()
     if (!t) {

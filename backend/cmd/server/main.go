@@ -21,7 +21,6 @@ import (
 )
 
 func main() {
-	// Load .env for local dev (real env vars take precedence and win in Docker).
 	for _, p := range []string{".env", "../.env"} {
 		_ = godotenv.Load(p)
 	}
@@ -53,7 +52,6 @@ func main() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	// Graceful shutdown on SIGINT/SIGTERM.
 	go func() {
 		log.Printf("listening on :%s", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -73,7 +71,6 @@ func main() {
 	}
 }
 
-// bootstrapAdmin creates the first admin account from env if none exists yet.
 func bootstrapAdmin(ctx context.Context, st *store.Store, cfg *config.Config) {
 	n, err := st.CountAdmins(ctx)
 	if err != nil {

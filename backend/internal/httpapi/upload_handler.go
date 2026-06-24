@@ -11,16 +11,13 @@ import (
 	"time"
 )
 
-const maxUploadBytes = 25 << 20 // 25 MB
+const maxUploadBytes = 25 << 20
 
-// allowed upload extensions → true
 var allowedExt = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
 	".webp": true, ".svg": true, ".pdf": true,
 }
 
-// POST /api/admin/uploads (multipart form, field "file")
-// Saves the file to UploadDir and returns its public URL.
 func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
 	if err := r.ParseMultipartForm(maxUploadBytes); err != nil {
@@ -59,8 +56,6 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Relative URL: works in dev (Vite proxy) and prod (Go serves /uploads),
-	// and stays valid if the host/port changes.
 	writeJSON(w, http.StatusCreated, map[string]string{
 		"url":      "/uploads/" + name,
 		"filename": name,

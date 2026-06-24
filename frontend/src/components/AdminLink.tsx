@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 
-// Discreet, always-present entry to the admin area (top-right corner).
 export default function AdminLink() {
   return (
     <Link

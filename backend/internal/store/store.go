@@ -1,4 +1,3 @@
-// Package store is the data-access layer over Postgres (pgx).
 package store
 
 import (
@@ -9,7 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// ErrNotFound is returned when a lookup yields no row.
 var ErrNotFound = errors.New("not found")
 
 type Store struct {

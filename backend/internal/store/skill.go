@@ -87,7 +87,6 @@ func (s *Store) DeleteSkill(ctx context.Context, id string) error {
 	return s.deleteByID(ctx, "skills", id)
 }
 
-// deleteByID is a shared helper for simple deletes (table is a code constant).
 func (s *Store) deleteByID(ctx context.Context, table, id string) error {
 	ct, err := s.pool.Exec(ctx, `DELETE FROM `+table+` WHERE id = $1`, id)
 	if err != nil {

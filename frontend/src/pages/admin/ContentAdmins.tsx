@@ -387,7 +387,7 @@ export function ExperienceAdmin() {
 
 export function ResumesAdmin({ categories }: { categories: Category[] }) {
   const [items, setItems] = useState<Resume[]>([])
-  const [target, setTarget] = useState('main') // 'main' | category id
+  const [target, setTarget] = useState('main')
   const [label, setLabel] = useState('')
   const [fileUrl, setFileUrl] = useState('')
   const [busy, setBusy] = useState(false)

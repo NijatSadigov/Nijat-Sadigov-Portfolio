@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 
-// Fixed top-right cluster: theme toggle + discreet admin entry.
 export default function TopControls() {
   return (
     <div className="fixed right-4 top-4 z-50 flex items-center gap-2">

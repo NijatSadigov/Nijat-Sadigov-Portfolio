@@ -26,8 +26,6 @@ func (s *Store) ListResumes(ctx context.Context) ([]models.Resume, error) {
 	return items, rows.Err()
 }
 
-// CreateResume enforces "0 or 1 per category" by replacing any existing resume
-// for the same category, and "one main" by clearing other mains when needed.
 func (s *Store) CreateResume(ctx context.Context, in models.ResumeInput) (string, error) {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {

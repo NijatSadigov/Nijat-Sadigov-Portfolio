@@ -2,12 +2,6 @@ import { useEffect, useState } from 'react'
 
 export type NavItem = { id: string; label: string }
 
-/**
- * Fixed left-edge navigation rail: a labelled tick per section. Clicking
- * smooth-scrolls to it; the tick for the section you're currently viewing
- * stays expanded + accented (scroll-spy via IntersectionObserver). Labels for
- * the other sections reveal when you hover the rail. Desktop only.
- */
 export default function SectionNav({ items }: { items: NavItem[] }) {
   const [active, setActive] = useState(items[0]?.id ?? '')
 
@@ -24,7 +18,6 @@ export default function SectionNav({ items }: { items: NavItem[] }) {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
         if (visible.length) setActive(visible[0].target.id)
       },
-      // a thin band ~one-third down the viewport decides the "current" section
       { rootMargin: '-32% 0px -60% 0px', threshold: 0 },
     )
     els.forEach((el) => io.observe(el))

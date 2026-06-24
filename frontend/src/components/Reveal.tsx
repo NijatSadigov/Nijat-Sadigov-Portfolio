@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-/**
- * Fades + slides its children up the first time they enter the viewport.
- * Uses a plain IntersectionObserver (threshold 0 → fires as soon as any pixel
- * is visible) so content can never get stuck invisible.
- */
 export default function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState(false)

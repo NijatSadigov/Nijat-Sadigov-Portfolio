@@ -1,14 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
-/**
- * Centered modal dialog. Rendered through a portal into <body> — critical,
- * because ancestors with CSS transforms/perspective (the DiceScene) hijack
- * position:fixed and push the dialog off-screen.
- *
- * The outer layer scrolls, so content taller than the viewport is reachable
- * from the top (no clipped headers).
- */
 export default function Modal({
   title,
   subtitle,

@@ -16,7 +16,6 @@ export function dateRange(start: string | null, end: string | null, isCurrent = 
 
 export const ALL = 'all'
 
-/** True if an item with these category ids belongs to the active view. */
 export function inActive(categoryIds: string[], active: string): boolean {
   return active === ALL || categoryIds.includes(active)
 }

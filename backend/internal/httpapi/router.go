@@ -1,4 +1,3 @@
-// Package httpapi wires the HTTP routes, middleware, and static serving.
 package httpapi
 
 import (
@@ -114,11 +113,9 @@ func NewRouter(cfg *config.Config, st *store.Store) http.Handler {
 		})
 	})
 
-	// Serve uploaded files.
 	uploadFS := http.FileServer(http.Dir(cfg.UploadDir))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads/", uploadFS))
 
-	// Serve the built SPA (with client-side routing fallback) when configured.
 	if cfg.StaticDir != "" {
 		r.Handle("/*", spaHandler(cfg.StaticDir))
 	}
@@ -126,8 +123,6 @@ func NewRouter(cfg *config.Config, st *store.Store) http.Handler {
 	return r
 }
 
-// spaHandler serves static files, falling back to index.html so the React
-// router can handle unknown paths.
 func spaHandler(dir string) http.HandlerFunc {
 	fileServer := http.FileServer(http.Dir(dir))
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -16,7 +16,6 @@ import type {
 
 export type ProfileResponse = { profile: Profile; socialLinks: SocialLink[] }
 
-// Same-origin in prod; dev uses the Vite proxy. Override with VITE_API_BASE_URL.
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
 
 const TOKEN_KEY = 'portfolio.token'

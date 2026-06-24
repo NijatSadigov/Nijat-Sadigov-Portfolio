@@ -1,8 +1,5 @@
--- gen_random_uuid() is core in PG13+, but pgcrypto guarantees availability.
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- ─────────────────────────────────────────────
--- Admin (single operator, but the table allows more)
 -- ─────────────────────────────────────────────
 CREATE TABLE admin_users (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -13,8 +10,6 @@ CREATE TABLE admin_users (
     updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- ─────────────────────────────────────────────
--- Profile: a single row of personal info (id is pinned to 1)
 -- ─────────────────────────────────────────────
 CREATE TABLE profile (
     id         INT PRIMARY KEY DEFAULT 1,
@@ -31,7 +26,7 @@ CREATE TABLE profile (
 
 CREATE TABLE social_links (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    platform   TEXT NOT NULL,           -- github | linkedin | twitter | email | website ...
+    platform   TEXT NOT NULL,
     label      TEXT NOT NULL DEFAULT '',
     url        TEXT NOT NULL,
     icon       TEXT NOT NULL DEFAULT '',
@@ -39,32 +34,28 @@ CREATE TABLE social_links (
 );
 
 -- ─────────────────────────────────────────────
--- Categories / profiles (software, game, research). Seeded below.
--- ─────────────────────────────────────────────
 CREATE TABLE categories (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    slug         TEXT NOT NULL UNIQUE,    -- 'software' | 'game' | 'research'
+    slug         TEXT NOT NULL UNIQUE,
     name         TEXT NOT NULL,
     description  TEXT NOT NULL DEFAULT '',
-    theme        TEXT NOT NULL DEFAULT 'default',  -- drives frontend look ('default','pixel','research')
+    theme        TEXT NOT NULL DEFAULT 'default',
     accent_color TEXT NOT NULL DEFAULT '#6366f1',
     sort_order   INT  NOT NULL DEFAULT 0
 );
 
 -- ─────────────────────────────────────────────
--- Projects
--- ─────────────────────────────────────────────
 CREATE TABLE projects (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     slug        TEXT NOT NULL UNIQUE,
     title       TEXT NOT NULL,
-    summary     TEXT NOT NULL DEFAULT '',   -- short blurb for cards
-    description TEXT NOT NULL DEFAULT '',    -- markdown for detail page
+    summary     TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
     repo_url    TEXT NOT NULL DEFAULT '',
     demo_url    TEXT NOT NULL DEFAULT '',
-    demo_type   TEXT NOT NULL DEFAULT 'none',   -- none | link | embed | video
-    demo_guide  TEXT NOT NULL DEFAULT '',       -- markdown usage guide
-    status      TEXT NOT NULL DEFAULT 'draft',  -- draft | published
+    demo_type   TEXT NOT NULL DEFAULT 'none',
+    demo_guide  TEXT NOT NULL DEFAULT '',
+    status      TEXT NOT NULL DEFAULT 'draft',
     featured    BOOLEAN NOT NULL DEFAULT false,
     view_count  INT NOT NULL DEFAULT 0,
     started_on  DATE,
@@ -85,7 +76,7 @@ CREATE TABLE project_images (
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     url        TEXT NOT NULL,
     caption    TEXT NOT NULL DEFAULT '',
-    is_cover   BOOLEAN NOT NULL DEFAULT false,   -- the one shown on the card
+    is_cover   BOOLEAN NOT NULL DEFAULT false,
     sort_order INT NOT NULL DEFAULT 0
 );
 
@@ -97,12 +88,10 @@ CREATE TABLE project_tech (
 );
 
 -- ─────────────────────────────────────────────
--- Skills
--- ─────────────────────────────────────────────
 CREATE TABLE skills (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name       TEXT NOT NULL,
-    level      INT NOT NULL DEFAULT 0,   -- 0-100
+    level      INT NOT NULL DEFAULT 0,
     icon       TEXT NOT NULL DEFAULT '',
     sort_order INT NOT NULL DEFAULT 0
 );
@@ -113,8 +102,6 @@ CREATE TABLE skill_categories (
     PRIMARY KEY (skill_id, category_id)
 );
 
--- ─────────────────────────────────────────────
--- Certifications
 -- ─────────────────────────────────────────────
 CREATE TABLE certifications (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -145,8 +132,6 @@ CREATE TABLE certification_images (
 );
 
 -- ─────────────────────────────────────────────
--- Achievements
--- ─────────────────────────────────────────────
 CREATE TABLE achievements (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title       TEXT NOT NULL,
@@ -161,8 +146,6 @@ CREATE TABLE achievement_categories (
     PRIMARY KEY (achievement_id, category_id)
 );
 
--- ─────────────────────────────────────────────
--- Education & work experience (global — shown on every profile)
 -- ─────────────────────────────────────────────
 CREATE TABLE education (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -182,16 +165,13 @@ CREATE TABLE work_experience (
     company     TEXT NOT NULL,
     role        TEXT NOT NULL DEFAULT '',
     location    TEXT NOT NULL DEFAULT '',
-    description TEXT NOT NULL DEFAULT '',   -- markdown
+    description TEXT NOT NULL DEFAULT '',
     start_date  DATE,
     end_date    DATE,
     is_current  BOOLEAN NOT NULL DEFAULT false,
     sort_order  INT NOT NULL DEFAULT 0
 );
 
--- ─────────────────────────────────────────────
--- Resumes: 0 or 1 per category, plus one "main" shown on the ALL view.
--- category_id NULL = a standalone resume not tied to a profile.
 -- ─────────────────────────────────────────────
 CREATE TABLE resumes (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -201,12 +181,9 @@ CREATE TABLE resumes (
     is_main     BOOLEAN NOT NULL DEFAULT false,
     uploaded_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
--- at most one resume per category, and at most one main resume overall
 CREATE UNIQUE INDEX resumes_one_per_category ON resumes (category_id) WHERE category_id IS NOT NULL;
 CREATE UNIQUE INDEX resumes_one_main         ON resumes (is_main)     WHERE is_main = true;
 
--- ─────────────────────────────────────────────
--- Contact form submissions
 -- ─────────────────────────────────────────────
 CREATE TABLE contact_messages (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -218,8 +195,6 @@ CREATE TABLE contact_messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- ─────────────────────────────────────────────
--- Helpful indexes for the public read paths
 -- ─────────────────────────────────────────────
 CREATE INDEX projects_status_idx        ON projects (status);
 CREATE INDEX projects_sort_idx          ON projects (sort_order, created_at DESC);

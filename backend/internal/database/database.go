@@ -1,4 +1,3 @@
-// Package database owns the Postgres connection pool and migration runner.
 package database
 
 import (
@@ -15,7 +14,6 @@ import (
 //go:embed migrations/*.sql
 var migrationFS embed.FS
 
-// Connect opens a pgx pool and verifies connectivity.
 func Connect(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
 	cfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
@@ -38,8 +36,6 @@ func Connect(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
 	return pool, nil
 }
 
-// Migrate applies every embedded *.up.sql file that hasn't run yet, in order.
-// Each file runs in its own transaction and is recorded in schema_migrations.
 func Migrate(ctx context.Context, pool *pgxpool.Pool) error {
 	if _, err := pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS schema_migrations (

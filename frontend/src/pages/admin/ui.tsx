@@ -137,7 +137,6 @@ export function CategoryPicker({
   )
 }
 
-/** Loads categories once for admin forms. */
 export function useCategories(): Category[] {
   const [cats, setCats] = useState<Category[]>([])
   useEffect(() => {
@@ -152,7 +151,6 @@ export async function uploadFile(file: File): Promise<string> {
 }
 
 // ── date helpers (backend wants RFC3339; <input type=date> gives YYYY-MM-DD) ──
-// Accepts either "YYYY-MM-DD" or a full ISO string and normalises to RFC3339.
 export const toApiDate = (v: string): string | null =>
   v ? new Date(v.slice(0, 10) + 'T00:00:00Z').toISOString() : null
 export const toDateInput = (iso: string | null): string => (iso ? iso.slice(0, 10) : '')

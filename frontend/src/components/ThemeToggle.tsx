@@ -6,7 +6,6 @@ function current(): Mode {
   return document.documentElement.dataset.mode === 'light' ? 'light' : 'dark'
 }
 
-// Sun/moon toggle, persisted in localStorage; set early by the inline script in index.html.
 export default function ThemeToggle() {
   const [mode, setMode] = useState<Mode>(current)
 
@@ -15,7 +14,6 @@ export default function ThemeToggle() {
     try {
       localStorage.setItem('portfolio.mode', mode)
     } catch {
-      /* ignore */
     }
   }, [mode])
 

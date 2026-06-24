@@ -1,6 +1,3 @@
-// Homepage content sections. Category-aware sections dim items that don't
-// belong to the active profile; global sections (education, experience) always
-// render the same.
 import { useState, type ReactNode } from 'react'
 import { api } from '../api/client'
 import { dateRange, inActive, monthYear } from '../lib/format'

@@ -35,8 +35,6 @@ export default function ProjectGrid({
     return <p className="mt-10 text-center font-mono text-sm text-faint">// no projects yet</p>
   }
 
-  // ALL view: everything together. Category view: matching projects shown first
-  // and in full; the rest moved below an "other work" divider, dimmed.
   const matching =
     active === ALL ? projects : projects.filter((p) => p.categoryIds.includes(active))
   const others = active === ALL ? [] : projects.filter((p) => !p.categoryIds.includes(active))

@@ -12,7 +12,6 @@ type ctxKey string
 
 const claimsKey ctxKey = "claims"
 
-// requireAuth rejects requests without a valid admin bearer token.
 func (s *Server) requireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		const prefix = "Bearer "

@@ -98,14 +98,14 @@ type Experience struct {
 	EndDate        *time.Time `json:"endDate"`
 	IsCurrent      bool       `json:"isCurrent"`
 	SortOrder      int        `json:"sortOrder"`
-	ReferenceURL   string     `json:"referenceUrl"`   // link to a reference letter / internship cert
-	ReferenceLabel string     `json:"referenceLabel"` // e.g. "Internship Certificate"
+	ReferenceURL   string     `json:"referenceUrl"`
+	ReferenceLabel string     `json:"referenceLabel"`
 }
 
 // ── Résumés ──
 type Resume struct {
 	ID         string    `json:"id"`
-	CategoryID *string   `json:"categoryId"` // null = standalone
+	CategoryID *string   `json:"categoryId"`
 	Label      string    `json:"label"`
 	FileURL    string    `json:"fileUrl"`
 	IsMain     bool      `json:"isMain"`

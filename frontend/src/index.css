@@ -8,7 +8,6 @@
 :root {
   --accent: 129 140 248;
 
-  /* dark (default) */
   --bg: 10 10 14;
   --surface: 20 20 27;
   --line: 38 38 47;
@@ -57,7 +56,6 @@ body {
   transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-/* film grain */
 body::after {
   content: '';
   position: fixed;
@@ -146,7 +144,6 @@ body::after {
 
 /* ── per-profile themes ────────────────────────────────── */
 
-/* Game dev: pixel-art flavour — square grid + hard shadows */
 [data-theme='pixel'] body {
   background-image:
     radial-gradient(70rem 50rem at 80% -20%, rgb(var(--accent) / 0.1), transparent 60%),
@@ -167,7 +164,6 @@ body::after {
   image-rendering: pixelated;
 }
 
-/* Research: academic paper flavour — serif headings */
 [data-theme='research'] .theme-heading {
   @apply font-serifResearch;
   font-weight: 600;

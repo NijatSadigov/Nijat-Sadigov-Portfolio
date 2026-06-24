@@ -1,10 +1,9 @@
-/** @type {import('tailwindcss').Config} */
+
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // All driven by CSS variables so they flip per light/dark + per profile.
         accent: 'rgb(var(--accent) / <alpha-value>)',
         bg: 'rgb(var(--bg) / <alpha-value>)',
         surface: 'rgb(var(--surface) / <alpha-value>)',

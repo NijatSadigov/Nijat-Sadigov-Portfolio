@@ -1,4 +1,3 @@
-// Package models holds the JSON-serializable domain types shared across the API.
 package models
 
 import "time"
@@ -65,7 +64,6 @@ type Project struct {
 	Tech        []string       `json:"tech"`
 }
 
-// ProjectInput is the write payload for create/update.
 type ProjectInput struct {
 	Slug        string     `json:"slug"`
 	Title       string     `json:"title"`
