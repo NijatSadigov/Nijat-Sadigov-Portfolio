@@ -27,4 +27,10 @@ epistemic.{$DOMAIN} {
 	reverse_proxy pdkb-epistemic:8000
 }
 
+# ── Payment Management System (paymentmanager.<domain>) ──────────────────
+paymentmanager.{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy paymentmanager:3000
+}
+
 # ── More project demo subdomains ────────────────────────────────────────
