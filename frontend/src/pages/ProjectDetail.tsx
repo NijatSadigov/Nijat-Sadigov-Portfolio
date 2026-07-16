@@ -137,7 +137,10 @@ export default function ProjectDetail() {
       )}
 
       {project.demoGuide && (
-        <section className="mt-10 rounded-xl border border-line bg-bg/40 p-6">
+        <section
+          className="mt-10 rounded-xl border border-line p-6"
+          style={{ background: 'color-mix(in srgb, var(--bg) 40%, transparent)' }}
+        >
           <h2 className="kicker">How to run / use it</h2>
           <div className="md mt-3">
             <ReactMarkdown>{project.demoGuide}</ReactMarkdown>

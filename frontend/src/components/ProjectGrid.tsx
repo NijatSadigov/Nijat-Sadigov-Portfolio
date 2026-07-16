@@ -1,65 +1,119 @@
-import { useState } from 'react'
-import type { Project } from '../types'
-import { ALL } from '../types'
+import { matchesProfile, orderProjects } from '../lib/projects'
+import { PROFILE_META, STAGGER_CAP, STAGGER_STEP_MS, type Mode, type ProfileSlug } from '../lib/theme'
+import type { Category, Project } from '../types'
 import ProjectCard from './ProjectCard'
-import ProjectModal from './ProjectModal'
 
-function Grid({
+function SectionHead({ title, meta }: { title: string; meta: string }) {
+  return (
+    <div className="mb-[26px] flex flex-wrap items-baseline justify-between gap-4">
+      <h2 className="head m-0 font-semibold" style={{ fontSize: 'clamp(1.3rem,3vw,2rem)' }}>
+        {title}
+      </h2>
+      <span className="font-mono text-[12.5px] text-faint">{meta}</span>
+    </div>
+  )
+}
+
+export function FeaturedProjects({
   projects,
-  dimmed,
+  categories,
+  active,
+  mode,
   onOpen,
 }: {
   projects: Project[]
-  dimmed?: boolean
+  categories: Category[]
+  active: ProfileSlug
+  mode: Mode
   onOpen: (p: Project) => void
 }) {
+  const featured = projects
+    .filter((p) => p.featured && matchesProfile(p, categories, active))
+    .sort((a, b) => b.viewCount - a.viewCount)
+    .slice(0, 3)
+
+  if (featured.length === 0) return null
+
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p) => (
-        <ProjectCard key={p.id} project={p} dimmed={dimmed} onOpen={onOpen} />
-      ))}
-    </div>
+    <section style={{ padding: 'clamp(40px,6vw,72px) 0 20px' }}>
+      <SectionHead
+        title={active === 'all' ? 'Selected work' : 'Featured'}
+        meta={`featured · ${PROFILE_META[active].label}`}
+      />
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
+        key={`featured-${active}`}
+      >
+        {featured.map((p, i) => (
+          <div
+            key={p.id}
+            className="card-in"
+            style={{ animationDelay: `${Math.min(i, STAGGER_CAP) * STAGGER_STEP_MS}ms` }}
+          >
+            <ProjectCard
+              project={p}
+              categories={categories}
+              active={active}
+              mode={mode}
+              variant="featured"
+              onOpen={onOpen}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }
 
 export default function ProjectGrid({
   projects,
+  categories,
   active,
+  mode,
+  onOpen,
 }: {
   projects: Project[]
-  active: string
+  categories: Category[]
+  active: ProfileSlug
+  mode: Mode
+  onOpen: (p: Project) => void
 }) {
-  const [selected, setSelected] = useState<Project | null>(null)
-
-  if (projects.length === 0) {
-    return <p className="mt-10 text-center font-mono text-sm text-faint">// no projects yet</p>
-  }
-
-  const matching =
-    active === ALL ? projects : projects.filter((p) => p.categoryIds.includes(active))
-  const others = active === ALL ? [] : projects.filter((p) => !p.categoryIds.includes(active))
+  const ordered = orderProjects(projects, categories, active)
+  const matching = ordered.filter((p) => matchesProfile(p, categories, active)).length
 
   return (
-    <>
-      {matching.length > 0 ? (
-        <Grid projects={matching} onOpen={setSelected} />
-      ) : (
-        <p className="font-mono text-sm text-faint">// nothing in this profile yet</p>
-      )}
-
-      {others.length > 0 && (
-        <div className="mt-12">
-          <div className="mb-6 flex items-center gap-4">
-            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-faint">
-              Other work
-            </span>
-            <span aria-hidden className="h-px flex-1 bg-line" />
+    <section id="work" style={{ padding: 'clamp(48px,7vw,80px) 0 20px' }}>
+      <SectionHead
+        title="All projects"
+        meta={
+          active === 'all'
+            ? `${ordered.length} projects`
+            : `${matching} in ${PROFILE_META[active].short.toLowerCase()} · ${ordered.length} total`
+        }
+      />
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))' }}
+        key={`grid-${active}`}
+      >
+        {ordered.map((p, i) => (
+          <div
+            key={p.id}
+            className="card-in"
+            style={{ animationDelay: `${Math.min(i, STAGGER_CAP) * STAGGER_STEP_MS}ms` }}
+          >
+            <ProjectCard
+              project={p}
+              categories={categories}
+              active={active}
+              mode={mode}
+              dimmed={!matchesProfile(p, categories, active)}
+              onOpen={onOpen}
+            />
           </div>
-          <Grid projects={others} dimmed onOpen={setSelected} />
-        </div>
-      )}
-
-      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
-    </>
+        ))}
+      </div>
+    </section>
   )
 }

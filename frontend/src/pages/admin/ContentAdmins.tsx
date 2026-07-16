@@ -480,7 +480,19 @@ export function MessagesAdmin() {
   return (
     <ul className="space-y-3">
       {items.map((m) => (
-        <li key={m.id} className={`rounded-xl border p-4 ${m.isRead ? 'border-slate-800 bg-slate-900/40' : 'border-accent/40 bg-accent/5'}`}>
+        <li
+          key={m.id}
+          className={`rounded-xl border p-4 ${m.isRead ? 'border-slate-800 bg-slate-900/40' : ''}`}
+          style={
+            m.isRead
+              ? undefined
+              : {
+                  // --accent is an oklch var, so blend rather than use /alpha
+                  borderColor: 'color-mix(in srgb, var(--accent) 40%, transparent)',
+                  background: 'color-mix(in srgb, var(--accent) 5%, transparent)',
+                }
+          }
+        >
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="font-medium text-white">{m.name} <span className="text-xs text-slate-500">· {m.email}</span></p>
