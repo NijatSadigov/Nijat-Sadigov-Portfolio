@@ -9,12 +9,14 @@ function Cover({
   ratio,
   chip,
   featured,
+  live,
 }: {
   project: Project
   slug: ProfileSlug
   ratio: string
   chip?: string
   featured?: boolean
+  live?: boolean
 }) {
   const url = coverUrl(project)
   const gen = url ? null : generatedCover(project.slug, project.title, slug)
@@ -55,19 +57,44 @@ function Cover({
         </span>
       )}
 
-      {featured && (
-        <span
-          className="absolute right-3 top-3 font-mono text-accent"
-          style={{
-            fontSize: 11,
-            padding: '4px 8px',
-            borderRadius: 5,
-            background: 'color-mix(in srgb, var(--bg) 55%, transparent)',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          ★ featured
-        </span>
+      {(featured || live) && (
+        <div className="absolute right-3 top-3 flex items-center gap-1.5">
+          {featured && (
+            <span
+              className="font-mono text-accent"
+              style={{
+                fontSize: 11,
+                padding: '4px 8px',
+                borderRadius: 5,
+                background: 'color-mix(in srgb, var(--bg) 55%, transparent)',
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              ★ featured
+            </span>
+          )}
+          {live && (
+            <span
+              className="flex items-center gap-1.5 font-mono"
+              title="This project has a live demo"
+              style={{
+                fontSize: 11,
+                padding: '4px 8px',
+                borderRadius: 5,
+                background: 'color-mix(in srgb, var(--bg) 55%, transparent)',
+                color: 'var(--text)',
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                className="live-dot inline-block h-[6px] w-[6px] shrink-0 rounded-full"
+                style={{ background: 'var(--accent)' }}
+              />
+              Live
+            </span>
+          )}
+        </div>
       )}
     </div>
   )
@@ -98,6 +125,7 @@ export default function ProjectCard({
 
   const isFeatured = variant === 'featured'
   const tags = isFeatured ? project.tech.slice(0, 4) : project.tech.slice(0, 2)
+  const hasLiveDemo = project.demoType !== 'none' && !!project.demoUrl
 
   return (
     <div style={wrap} className={dimmed ? 'dimmed h-full' : 'h-full'}>
@@ -112,6 +140,7 @@ export default function ProjectCard({
           ratio={isFeatured ? '16/9' : '5/3'}
           chip={chip}
           featured={isFeatured && project.featured}
+          live={hasLiveDemo}
         />
 
         <div
