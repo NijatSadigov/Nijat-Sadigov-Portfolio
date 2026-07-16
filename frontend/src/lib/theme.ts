@@ -19,31 +19,46 @@ export const PROFILE_META: Record<ProfileSlug, { label: string; short: string }>
 // active — switcher dots, the lens cards, and the incoming sweep.
 export const PROFILE_TOKENS: Record<
   ProfileSlug,
-  { accent: Record<Mode, string>; headFont: string; caps: string; track: string }
+  {
+    accent: Record<Mode, string>
+    accent2: Record<Mode, string>
+    headFont: string
+    caps: string
+    track: string
+    radius: string
+  }
 > = {
   all: {
     accent: { dark: 'oklch(0.83 0.13 84)', light: 'oklch(0.66 0.13 66)' },
+    accent2: { dark: 'oklch(0.72 0.1 250)', light: 'oklch(0.52 0.12 258)' },
     headFont: "'Newsreader', Georgia, serif",
     caps: 'none',
     track: '-0.01em',
+    radius: '12px',
   },
   game: {
     accent: { dark: 'oklch(0.84 0.2 152)', light: 'oklch(0.56 0.18 150)' },
+    accent2: { dark: 'oklch(0.72 0.23 330)', light: 'oklch(0.55 0.21 330)' },
     headFont: "'Silkscreen', monospace",
     caps: 'uppercase',
     track: '0.04em',
+    radius: '0px',
   },
   software: {
     accent: { dark: 'oklch(0.74 0.15 236)', light: 'oklch(0.52 0.16 252)' },
+    accent2: { dark: 'oklch(0.82 0.13 196)', light: 'oklch(0.55 0.12 214)' },
     headFont: "'JetBrains Mono', ui-monospace, monospace",
     caps: 'none',
     track: '0.01em',
+    radius: '4px',
   },
   research: {
     accent: { dark: 'oklch(0.68 0.13 34)', light: 'oklch(0.48 0.14 32)' },
+    accent2: { dark: 'oklch(0.62 0.07 250)', light: 'oklch(0.42 0.07 256)' },
     headFont: "'Newsreader', Georgia, serif",
     caps: 'none',
     track: '0',
+    radius: '7px',
   },
 }
 

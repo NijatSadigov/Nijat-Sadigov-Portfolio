@@ -5,7 +5,8 @@ import AdminLink from '../components/AdminLink'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
-import ProjectGrid from '../components/ProjectGrid'
+import ProjectGrid, { FeaturedProjects } from '../components/ProjectGrid'
+import ProjectModal from '../components/ProjectModal'
 import SweepOverlay from '../components/SweepOverlay'
 import {
   AchievementsSection,
@@ -13,7 +14,6 @@ import {
   ContactSection,
   EducationSection,
   ExperienceSection,
-  SectionShell,
   SkillsSection,
 } from '../components/sections'
 import {
@@ -21,13 +21,12 @@ import {
   applyProfile,
   initialMode,
   initialProfile,
-  PROFILE_META,
   SWEEP_SWAP_MS,
   SWEEP_TOTAL_MS,
   type Mode,
   type ProfileSlug,
 } from '../lib/theme'
-import { ALL, type SiteData } from '../types'
+import { ALL, type Project, type SiteData } from '../types'
 
 export default function Home() {
   const [site, setSite] = useState<SiteData | null>(null)
@@ -36,8 +35,19 @@ export default function Home() {
   const [profile, setProfileState] = useState<ProfileSlug>(initialProfile)
   const [mode, setMode] = useState<Mode>(initialMode)
   const [nextProfile, setNextProfile] = useState<ProfileSlug | null>(null)
+  const [selected, setSelected] = useState<Project | null>(null)
   const reduce = useReducedMotion()
   const timers = useRef<number[]>([])
+  const counted = useRef<Set<string>>(new Set())
+
+  const openProject = useCallback((p: Project) => {
+    setSelected(p)
+    // Count a view once per session, and don't let a failure surface to the user.
+    if (!counted.current.has(p.slug)) {
+      counted.current.add(p.slug)
+      api.recordView(p.slug).catch(() => {})
+    }
+  }, [])
 
   useEffect(() => {
     api
@@ -119,15 +129,21 @@ export default function Home() {
             onPick={pickProfile}
           />
 
-          <div id="work">
-            <SectionShell
-              no="01"
-              title="Projects"
-              meta={`/ ${PROFILE_META[profile].label.toLowerCase()}`}
-            >
-              <ProjectGrid projects={site.projects} active={activeId} />
-            </SectionShell>
-          </div>
+          <FeaturedProjects
+            projects={site.projects}
+            categories={site.categories}
+            active={profile}
+            mode={mode}
+            onOpen={openProject}
+          />
+
+          <ProjectGrid
+            projects={site.projects}
+            categories={site.categories}
+            active={profile}
+            mode={mode}
+            onOpen={openProject}
+          />
 
           <SkillsSection no="02" skills={site.skills} active={activeId} />
           <CertificationsSection no="03" certifications={site.certifications} active={activeId} />
@@ -140,6 +156,16 @@ export default function Home() {
         <Footer profile={site.profile} socialLinks={site.socialLinks} />
         <AdminLink />
       </div>
+
+      {selected && (
+        <ProjectModal
+          project={selected}
+          categories={site.categories}
+          active={profile}
+          mode={mode}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </>
   )
 }

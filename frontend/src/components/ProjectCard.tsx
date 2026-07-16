@@ -1,125 +1,178 @@
-import { useEffect, useRef, useState } from 'react'
-import type { Project } from '../types'
+import { generatedCover } from '../lib/cover'
+import { coverUrl, themeSlug, tokenStyle } from '../lib/projects'
+import { type Mode, type ProfileSlug } from '../lib/theme'
+import type { Category, Project } from '../types'
 
-function orderedImages(p: Project): string[] {
-  const cover = p.images.find((i) => i.isCover) ?? p.images[0]
-  if (!cover) return []
-  return [cover.url, ...p.images.filter((i) => i.id !== cover.id).map((i) => i.url)]
-}
+function Cover({
+  project,
+  slug,
+  ratio,
+  chip,
+  featured,
+}: {
+  project: Project
+  slug: ProfileSlug
+  ratio: string
+  chip?: string
+  featured?: boolean
+}) {
+  const url = coverUrl(project)
+  const gen = url ? null : generatedCover(project.slug, project.title, slug)
 
-function hasLiveDemo(p: Project): boolean {
-  return p.demoType !== 'none' && !!p.demoUrl
+  return (
+    <div
+      className="relative"
+      style={{ aspectRatio: ratio, background: gen ? gen.background : 'var(--surface-2)' }}
+    >
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        gen && (
+          <div className="absolute inset-0" style={gen.overlay}>
+            {gen.glyph}
+          </div>
+        )
+      )}
+
+      {chip && (
+        <span
+          className="absolute left-3 top-3 font-mono"
+          style={{
+            fontSize: 10.5,
+            padding: '3px 7px',
+            borderRadius: 5,
+            background: 'color-mix(in srgb, var(--bg) 55%, transparent)',
+            color: 'var(--text)',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          {chip}
+        </span>
+      )}
+
+      {featured && (
+        <span
+          className="absolute right-3 top-3 font-mono text-accent"
+          style={{
+            fontSize: 11,
+            padding: '4px 8px',
+            borderRadius: 5,
+            background: 'color-mix(in srgb, var(--bg) 55%, transparent)',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          ★ featured
+        </span>
+      )}
+    </div>
+  )
 }
 
 export default function ProjectCard({
   project,
-  dimmed = false,
+  categories,
+  active,
+  mode,
+  dimmed,
+  variant = 'grid',
   onOpen,
 }: {
   project: Project
+  categories: Category[]
+  active: ProfileSlug
+  mode: Mode
   dimmed?: boolean
+  variant?: 'grid' | 'featured'
   onOpen: (p: Project) => void
 }) {
-  const images = orderedImages(project)
-  const [idx, setIdx] = useState(0)
-  const timer = useRef<number | undefined>(undefined)
+  const slug = themeSlug(project, categories, active)
+  const wrap = tokenStyle(slug, active, mode)
+  // Chip follows the same rule as the theme: the viewed category when this
+  // project belongs to it, otherwise the project's own.
+  const chip = categories.find((c) => c.slug === slug)?.name
 
-  const startCycle = () => {
-    if (images.length > 1 && timer.current === undefined) {
-      timer.current = window.setInterval(() => setIdx((i) => (i + 1) % images.length), 1200)
-    }
-  }
-  const stopCycle = () => {
-    if (timer.current !== undefined) {
-      clearInterval(timer.current)
-      timer.current = undefined
-    }
-    setIdx(0)
-  }
-  useEffect(
-    () => () => {
-      if (timer.current !== undefined) clearInterval(timer.current)
-    },
-    [],
-  )
+  const isFeatured = variant === 'featured'
+  const tags = isFeatured ? project.tech.slice(0, 4) : project.tech.slice(0, 2)
 
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(project)}
-      onMouseEnter={startCycle}
-      onMouseLeave={stopCycle}
-      className={[
-        'theme-card group relative block w-full overflow-hidden rounded-xl border border-line bg-surface text-left transition-all duration-300',
-        'hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_48px_-12px_rgb(var(--accent)/0.3)]',
-        dimmed ? 'opacity-40 hover:opacity-100' : 'opacity-100',
-      ].join(' ')}
-    >
-      <div className="relative aspect-video w-full overflow-hidden bg-bg">
-        {images.length > 0 ? (
-          <img
-            src={images[idx]}
-            alt={project.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-widest text-faint">
-            no image
-          </div>
-        )}
+    <div style={wrap} className={dimmed ? 'dimmed h-full' : 'h-full'}>
+      <button
+        data-card=""
+        onClick={() => onOpen(project)}
+        className="card flex h-full w-full flex-col overflow-hidden text-left"
+      >
+        <Cover
+          project={project}
+          slug={slug}
+          ratio={isFeatured ? '16/9' : '5/3'}
+          chip={chip}
+          featured={isFeatured && project.featured}
+        />
 
-        {hasLiveDemo(project) && (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-300 backdrop-blur">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            Live
-          </span>
-        )}
-
-        {images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
-            {images.map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 w-1.5 rounded-full transition ${i === idx ? 'bg-accent' : 'bg-white/40'}`}
-              />
-            ))}
-          </div>
-        )}
-        <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/50 font-mono text-sm text-accent opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
-          ↗
-        </span>
-      </div>
-
-      <div className="p-5">
-        {project.featured && (
-          <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-            ★ Featured
-          </p>
-        )}
-        <h3 className="theme-heading text-lg font-semibold text-ink">{project.title}</h3>
-        {project.summary && (
-          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted">{project.summary}</p>
-        )}
-        {project.tech.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {project.tech.slice(0, 4).map((t) => (
-              <span
-                key={t}
-                className="rounded border border-line px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-faint"
-              >
-                {t}
+        <div
+          className="flex flex-1 flex-col"
+          style={{ padding: isFeatured ? '20px 22px 24px' : '16px 18px 18px' }}
+        >
+          <div className="mb-2 flex items-baseline justify-between gap-3">
+            <h3
+              className="head m-0 font-semibold"
+              style={{
+                fontSize: isFeatured ? 'clamp(1.15rem, 2.2vw, 1.5rem)' : '1.12rem',
+                letterSpacing: '-.01em',
+              }}
+            >
+              {project.title}
+            </h3>
+            {isFeatured && (
+              <span className="whitespace-nowrap font-mono text-[11px] text-faint">
+                {project.viewCount} views
               </span>
-            ))}
-            {project.tech.length > 4 && (
-              <span className="px-1 font-mono text-[10px] text-faint">+{project.tech.length - 4}</span>
             )}
           </div>
-        )}
-      </div>
-    </button>
+
+          <p
+            className="m-0 flex-1 text-dim"
+            style={{
+              fontSize: isFeatured ? 15 : 13.5,
+              lineHeight: 1.5,
+              marginBottom: isFeatured ? 16 : 14,
+              textWrap: 'pretty',
+            }}
+          >
+            {project.summary}
+          </p>
+
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1.5">
+              {tags.map((t) => (
+                <span
+                  key={t}
+                  className="font-mono text-dim"
+                  style={{
+                    fontSize: isFeatured ? 11.5 : 11,
+                    padding: isFeatured ? '4px 9px' : '3px 8px',
+                    borderRadius: 5,
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border-2)',
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+            {!isFeatured && (
+              <span className="whitespace-nowrap font-mono text-[10.5px] text-faint">
+                {project.viewCount}↗
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    </div>
   )
 }

@@ -337,7 +337,24 @@ body {
   }
 }
 .pop {
-  animation: pop 0.28s var(--ease-out);
+  animation: pop 0.5s var(--ease-out) both;
+}
+
+/* Cards re-enter with a stagger when the profile changes. */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+}
+.card-in {
+  animation: cardIn 520ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-in {
+    animation: none !important;
+  }
 }
 
 @keyframes blink {
