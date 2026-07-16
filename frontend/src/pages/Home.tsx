@@ -1,30 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from 'framer-motion'
 import { api } from '../api/client'
-import TopControls from '../components/TopControls'
-import CategoryButtons from '../components/CategoryButtons'
-import DiceScene, { type DiceDir } from '../components/DiceScene'
+import AdminLink from '../components/AdminLink'
 import Footer from '../components/Footer'
+import Header from '../components/Header'
 import Hero from '../components/Hero'
 import ProjectGrid from '../components/ProjectGrid'
-import SectionNav, { type NavItem } from '../components/SectionNav'
+import SweepOverlay from '../components/SweepOverlay'
 import {
   AchievementsSection,
   CertificationsSection,
   ContactSection,
   EducationSection,
   ExperienceSection,
-  ResumeBar,
   SectionShell,
   SkillsSection,
 } from '../components/sections'
-import { applyProfile, isProfileSlug } from '../lib/theme'
+import {
+  applyMode,
+  applyProfile,
+  initialMode,
+  initialProfile,
+  PROFILE_META,
+  SWEEP_SWAP_MS,
+  SWEEP_TOTAL_MS,
+  type Mode,
+  type ProfileSlug,
+} from '../lib/theme'
 import { ALL, type SiteData } from '../types'
 
 export default function Home() {
   const [site, setSite] = useState<SiteData | null>(null)
-  const [active, setActive] = useState<string>(ALL)
-  const [direction, setDirection] = useState<DiceDir>('up')
   const [error, setError] = useState<string | null>(null)
+
+  const [profile, setProfileState] = useState<ProfileSlug>(initialProfile)
+  const [mode, setMode] = useState<Mode>(initialMode)
+  const [nextProfile, setNextProfile] = useState<ProfileSlug | null>(null)
+  const reduce = useReducedMotion()
+  const timers = useRef<number[]>([])
 
   useEffect(() => {
     api
@@ -33,20 +46,29 @@ export default function Home() {
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'))
   }, [])
 
-  useEffect(() => {
-    if (!site) return
-    if (active === ALL) {
-      applyProfile('all')
-      return
-    }
-    const slug = site.categories.find((c) => c.id === active)?.slug
-    if (slug && isProfileSlug(slug)) applyProfile(slug)
-  }, [active, site])
+  useEffect(() => applyProfile(profile), [profile])
+  useEffect(() => applyMode(mode), [mode])
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
-  const select = (id: string, dir: DiceDir) => {
-    setDirection(dir)
-    setActive(id)
-  }
+  // The tokens swap at the midpoint of the wipe, so the new theme is already
+  // painted when the overlay clears.
+  const pickProfile = useCallback(
+    (next: ProfileSlug) => {
+      if (next === profile || nextProfile) return
+      if (reduce) {
+        setProfileState(next)
+        return
+      }
+      setNextProfile(next)
+      timers.current.push(
+        window.setTimeout(() => setProfileState(next), SWEEP_SWAP_MS),
+        window.setTimeout(() => setNextProfile(null), SWEEP_TOTAL_MS),
+      )
+    },
+    [profile, nextProfile, reduce],
+  )
+
+  const toggleMode = () => setMode((m) => (m === 'dark' ? 'light' : 'dark'))
 
   if (error) {
     return (
@@ -66,45 +88,58 @@ export default function Home() {
     )
   }
 
-  const activeName =
-    active === ALL ? 'all work' : (site.categories.find((c) => c.id === active)?.name ?? '')
-
-  const navItems: NavItem[] = [
-    { id: 'intro', label: 'Intro' },
-    { id: 'projects', label: 'Projects' },
-    site.skills.length > 0 && { id: 'skills', label: 'Skills' },
-    site.certifications.length > 0 && { id: 'certifications', label: 'Certifications' },
-    site.achievements.length > 0 && { id: 'achievements', label: 'Achievements' },
-    site.education.length > 0 && { id: 'education', label: 'Education' },
-    site.experience.length > 0 && { id: 'experience', label: 'Experience' },
-    { id: 'contact', label: 'Contact' },
-  ].filter(Boolean) as NavItem[]
+  const activeCat = site.categories.find((c) => c.slug === profile)
+  const activeId = profile === 'all' ? ALL : (activeCat?.id ?? ALL)
+  const descriptions = Object.fromEntries(
+    site.categories.map((c) => [c.slug, c.description]),
+  ) as Partial<Record<ProfileSlug, string>>
 
   return (
-    <div className="min-h-screen pb-10">
-      <TopControls />
-      <SectionNav items={navItems} />
-      <Hero profile={site.profile} socialLinks={site.socialLinks} />
+    <>
+      <SweepOverlay next={nextProfile} mode={mode} />
+      <div aria-hidden="true" className="texture" />
 
-      <CategoryButtons categories={site.categories} active={active} onSelect={select} />
+      <div className="relative z-[1] min-h-screen pb-10">
+        <Header
+          profile={profile}
+          mode={mode}
+          descriptions={descriptions}
+          onPick={pickProfile}
+          onToggleMode={toggleMode}
+        />
 
-      <ResumeBar resumes={site.resumes} active={active} />
+        <main id="top" className="shell">
+          <Hero
+            profile={site.profile}
+            categories={site.categories}
+            projects={site.projects}
+            resumes={site.resumes}
+            active={profile}
+            mode={mode}
+            onPick={pickProfile}
+          />
 
-      <DiceScene sceneKey={active} direction={direction}>
-        <SectionShell no="01" title="Projects" meta={`/ ${activeName.toLowerCase()}`}>
-          <ProjectGrid projects={site.projects} active={active} />
-        </SectionShell>
+          <div id="work">
+            <SectionShell
+              no="01"
+              title="Projects"
+              meta={`/ ${PROFILE_META[profile].label.toLowerCase()}`}
+            >
+              <ProjectGrid projects={site.projects} active={activeId} />
+            </SectionShell>
+          </div>
 
-        <SkillsSection no="02" skills={site.skills} active={active} />
-        <CertificationsSection no="03" certifications={site.certifications} active={active} />
-        <AchievementsSection no="04" achievements={site.achievements} active={active} />
-      </DiceScene>
+          <SkillsSection no="02" skills={site.skills} active={activeId} />
+          <CertificationsSection no="03" certifications={site.certifications} active={activeId} />
+          <AchievementsSection no="04" achievements={site.achievements} active={activeId} />
+          <EducationSection no="05" education={site.education} />
+          <ExperienceSection no="06" experience={site.experience} />
+          <ContactSection no="07" email={site.profile.email} />
+        </main>
 
-      <EducationSection no="05" education={site.education} />
-      <ExperienceSection no="06" experience={site.experience} />
-      <ContactSection no="07" email={site.profile.email} />
-
-      <Footer profile={site.profile} socialLinks={site.socialLinks} />
-    </div>
+        <Footer profile={site.profile} socialLinks={site.socialLinks} />
+        <AdminLink />
+      </div>
+    </>
   )
 }

@@ -249,6 +249,74 @@ body {
   animation: sweep 860ms cubic-bezier(0.7, 0, 0.3, 1) forwards;
 }
 
+@keyframes sweepText {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  45%,
+  55% {
+    opacity: 1;
+    transform: none;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+.sweep-text {
+  animation: sweepText 800ms var(--ease) forwards;
+}
+
+/* Fixed, per-profile background texture. */
+.texture {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.7s var(--ease);
+}
+[data-mode='dark'] .texture {
+  mix-blend-mode: screen;
+}
+[data-mode='light'] .texture {
+  mix-blend-mode: multiply;
+}
+[data-theme='all'] .texture {
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    color-mix(in srgb, var(--accent) 18%, transparent),
+    transparent 55%
+  );
+  opacity: 1;
+}
+[data-theme='game'] .texture {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.5) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: 0.5;
+}
+[data-theme='game'][data-mode='light'] .texture {
+  opacity: 0.18;
+}
+[data-theme='software'] .texture {
+  background-image: repeating-linear-gradient(0deg, var(--border-2) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, var(--border-2) 0 1px, transparent 1px 44px);
+  opacity: 0.55;
+}
+[data-theme='research'] .texture {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0 31px,
+    var(--border-2) 31px 32px
+  );
+  opacity: 0.55;
+}
+
 @keyframes floaty {
   0%,
   100% {

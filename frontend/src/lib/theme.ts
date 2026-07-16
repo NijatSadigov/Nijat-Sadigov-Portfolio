@@ -14,6 +14,41 @@ export const PROFILE_META: Record<ProfileSlug, { label: string; short: string }>
   research: { label: 'Academic research', short: 'Research' },
 }
 
+// The active profile's tokens come from CSS vars. These duplicates exist for the
+// places that must paint a profile's colour while a *different* profile is
+// active — switcher dots, the lens cards, and the incoming sweep.
+export const PROFILE_TOKENS: Record<
+  ProfileSlug,
+  { accent: Record<Mode, string>; headFont: string; caps: string; track: string }
+> = {
+  all: {
+    accent: { dark: 'oklch(0.83 0.13 84)', light: 'oklch(0.66 0.13 66)' },
+    headFont: "'Newsreader', Georgia, serif",
+    caps: 'none',
+    track: '-0.01em',
+  },
+  game: {
+    accent: { dark: 'oklch(0.84 0.2 152)', light: 'oklch(0.56 0.18 150)' },
+    headFont: "'Silkscreen', monospace",
+    caps: 'uppercase',
+    track: '0.04em',
+  },
+  software: {
+    accent: { dark: 'oklch(0.74 0.15 236)', light: 'oklch(0.52 0.16 252)' },
+    headFont: "'JetBrains Mono', ui-monospace, monospace",
+    caps: 'none',
+    track: '0.01em',
+  },
+  research: {
+    accent: { dark: 'oklch(0.68 0.13 34)', light: 'oklch(0.48 0.14 32)' },
+    headFont: "'Newsreader', Georgia, serif",
+    caps: 'none',
+    track: '0',
+  },
+}
+
+export const ON_ACCENT: Record<Mode, string> = { dark: '#08080b', light: '#fbfbf7' }
+
 const MODE_KEY = 'portfolio.mode'
 const PROFILE_KEY = 'portfolio.profile'
 

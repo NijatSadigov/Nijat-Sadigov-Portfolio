@@ -1,104 +1,217 @@
-import type { Profile, SocialLink } from '../types'
+import { PROFILE_META, PROFILE_TOKENS, type Mode, type ProfileSlug } from '../lib/theme'
+import type { Category, Profile, Project, Resume } from '../types'
 
-function Avatar({ profile }: { profile: Profile }) {
-  const frame = (
-    <span
-      aria-hidden
-      className="absolute -inset-1 translate-x-3 translate-y-3 rounded-2xl border border-accent/40 transition-transform duration-300 group-hover:translate-x-2 group-hover:translate-y-2"
-    />
-  )
-  if (profile.photoUrl) {
-    return (
-      <div className="group relative">
-        {frame}
-        <img
-          src={profile.photoUrl}
-          alt={profile.fullName}
-          className="relative h-44 w-44 rounded-2xl border border-line object-cover sm:h-56 sm:w-56"
-        />
-      </div>
-    )
-  }
-  const initials = profile.fullName
-    .split(' ')
-    .map((s) => s[0])
-    .slice(0, 2)
-    .join('')
-  return (
-    <div className="group relative">
-      {frame}
-      <div className="relative grid h-44 w-44 place-items-center rounded-2xl border border-line bg-gradient-to-br from-accent/30 to-transparent font-display text-5xl font-bold text-ink sm:h-56 sm:w-56">
-        {initials || 'NS'}
-      </div>
-    </div>
-  )
-}
+const LENSES: ProfileSlug[] = ['game', 'software', 'research']
 
 export default function Hero({
   profile,
-  socialLinks,
+  categories,
+  projects,
+  resumes,
+  active,
+  mode,
+  onPick,
 }: {
   profile: Profile
-  socialLinks: SocialLink[]
+  categories: Category[]
+  projects: Project[]
+  resumes: Resume[]
+  active: ProfileSlug
+  mode: Mode
+  onPick: (p: ProfileSlug) => void
 }) {
+  const bySlug = (slug: ProfileSlug) => categories.find((c) => c.slug === slug)
+  const activeCat = bySlug(active)
+
+  // Kicker and lead come from real content: the category in a profile view,
+  // the bio in the synthesis view.
+  const kicker =
+    active === 'all'
+      ? LENSES.map((s) => PROFILE_META[s].short).join(' · ')
+      : (activeCat?.name ?? PROFILE_META[active].label)
+  const lead = active === 'all' ? profile.bio : (activeCat?.description ?? profile.bio)
+
+  const resume =
+    active === 'all'
+      ? resumes.find((r) => r.isMain)
+      : (resumes.find((r) => r.categoryId === activeCat?.id) ?? resumes.find((r) => r.isMain))
+  const resumeLabel = active === 'all' ? 'Résumé (full)' : `Résumé — ${PROFILE_META[active].short}`
+
   return (
-    <header
-      id="intro"
-      className="mx-auto flex max-w-6xl scroll-mt-24 flex-col-reverse items-center gap-10 px-6 pt-20 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left"
+    <section
+      className="relative overflow-hidden"
+      style={{ padding: 'clamp(64px,11vw,140px) 0 clamp(48px,7vw,90px)' }}
     >
-      <div className="max-w-2xl">
-        {profile.openToWork && (
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-emerald-400">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            Open to work
-          </span>
-        )}
-        <p className="kicker">Software · Games · Research</p>
+      <div
+        aria-hidden="true"
+        className="floaty pointer-events-none absolute"
+        style={{
+          top: '-20%',
+          right: '-10%',
+          width: 520,
+          height: 520,
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 68%)',
+          filter: 'blur(40px)',
+        }}
+      />
 
-        <h1 className="theme-heading mt-4 bg-gradient-to-br from-ink via-ink to-[rgb(var(--accent))] bg-clip-text text-5xl font-bold leading-[1.05] tracking-tight text-transparent sm:text-6xl lg:text-7xl">
-          {profile.fullName || 'Your Name'}
-        </h1>
-
-        {profile.headline && (
-          <p className="mt-5 font-mono text-sm text-accent sm:text-base">
-            {profile.headline}
-            <span className="cursor-blink ml-1">▌</span>
-          </p>
-        )}
-
-        {profile.bio && <p className="mt-5 leading-relaxed text-muted">{profile.bio}</p>}
-
-        <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1.5 font-mono text-xs text-faint sm:justify-start">
-          {profile.location && <span>{profile.location}</span>}
-          {profile.email && (
-            <a href={`mailto:${profile.email}`} className="transition hover:text-accent">
-              {profile.email}
-            </a>
+      <div
+        className="relative z-[1] flex items-center justify-between"
+        style={{ flexWrap: 'wrap-reverse', gap: 'clamp(28px,5vw,64px)' }}
+      >
+        <div className="max-w-[660px] flex-[1_1_460px]">
+          {profile.headline && (
+            <div className="mb-[26px] flex flex-wrap items-center gap-3 font-mono text-[13px] text-dim">
+              <span className="text-accent">//</span>
+              <span>{profile.headline}</span>
+            </div>
           )}
-          {profile.phone && <span>{profile.phone}</span>}
+
+          <h1
+            className="m-0 mb-2 font-display font-medium"
+            style={{
+              fontSize: 'clamp(3rem,9vw,7.2rem)',
+              lineHeight: 0.94,
+              letterSpacing: '-.03em',
+            }}
+          >
+            {profile.fullName}
+          </h1>
+
+          <div
+            className="head mb-7 text-accent"
+            style={{ fontSize: 'clamp(1.05rem,2.4vw,1.7rem)', transition: 'color .6s var(--ease)' }}
+          >
+            {kicker}
+          </div>
+
+          {lead && (
+            <p
+              className="mb-[38px] max-w-[640px] text-dim"
+              style={{
+                fontSize: 'clamp(1.1rem,2.1vw,1.5rem)',
+                lineHeight: 1.5,
+                textWrap: 'pretty',
+              }}
+            >
+              {lead}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-3">
+            {resume && (
+              <a
+                href={resume.fileUrl}
+                className="inline-flex items-center gap-[9px] px-[22px] py-[14px] text-[15px] font-bold"
+                style={{
+                  borderRadius: 'var(--radius)',
+                  background: 'var(--accent)',
+                  color: 'var(--on-accent)',
+                }}
+              >
+                ↓ {resumeLabel}
+              </a>
+            )}
+            <a
+              href="#work"
+              className="inline-flex items-center gap-[9px] px-[22px] py-[14px] text-[15px] font-semibold text-text"
+              style={{ borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}
+            >
+              View work →
+            </a>
+            <a href="#contact" className="px-2 py-[14px] text-[15px] font-semibold text-dim">
+              Get in touch
+            </a>
+          </div>
         </div>
 
-        {socialLinks.length > 0 && (
-          <div className="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">
-            {socialLinks.map((s) => (
-              <a
-                key={s.id}
-                href={s.url}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg border border-line bg-surface px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-muted transition hover:-translate-y-0.5 hover:border-accent hover:text-accent"
-              >
-                {s.label || s.platform}
-              </a>
-            ))}
+        <div className="w-full min-w-[230px] max-w-[340px] flex-[0_1_320px]">
+          <div
+            className="floaty relative overflow-hidden"
+            style={{
+              aspectRatio: '4/5',
+              borderRadius: 'var(--radius)',
+              border: '1px solid var(--border)',
+              background: profile.photoUrl
+                ? undefined
+                : 'repeating-linear-gradient(135deg, var(--surface) 0 13px, var(--surface-2) 13px 26px)',
+              boxShadow: '0 40px 70px -35px rgba(0,0,0,.65)',
+            }}
+          >
+            {profile.photoUrl ? (
+              <img
+                src={profile.photoUrl}
+                alt={profile.fullName}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 grid place-items-center font-mono text-[12px] text-faint">
+                portrait · 4:5
+              </div>
+            )}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 bottom-0"
+              style={{
+                height: '42%',
+                background:
+                  'linear-gradient(transparent, color-mix(in srgb, var(--accent) 26%, transparent))',
+              }}
+            />
+            <span
+              aria-hidden="true"
+              className="absolute left-3 top-3 h-[14px] w-[14px]"
+              style={{ borderLeft: '2px solid var(--accent)', borderTop: '2px solid var(--accent)' }}
+            />
+            <span
+              aria-hidden="true"
+              className="absolute bottom-3 right-3 h-[14px] w-[14px]"
+              style={{
+                borderRight: '2px solid var(--accent)',
+                borderBottom: '2px solid var(--accent)',
+              }}
+            />
           </div>
-        )}
+        </div>
       </div>
 
-      <Avatar profile={profile} />
-    </header>
+      <div
+        className="relative z-[1] flex flex-wrap gap-[10px]"
+        style={{ marginTop: 'clamp(48px,7vw,80px)' }}
+      >
+        {LENSES.map((slug, i) => {
+          const cat = bySlug(slug)
+          const count = cat ? projects.filter((p) => p.categoryIds.includes(cat.id)).length : 0
+          const tok = PROFILE_TOKENS[slug]
+          return (
+            <button
+              key={slug}
+              onClick={() => onPick(slug)}
+              className="card flex-[1_1_220px] text-left"
+              style={{ padding: '22px 22px 24px' }}
+            >
+              <span className="mb-2 block font-mono text-[11px] text-faint">
+                0{i + 1} / {count}
+              </span>
+              <span
+                className="mb-1.5 block font-semibold"
+                style={{
+                  fontFamily: tok.headFont,
+                  fontSize: 'clamp(1rem,1.8vw,1.35rem)',
+                  color: tok.accent[mode],
+                  textTransform: tok.caps as 'none' | 'uppercase',
+                  letterSpacing: tok.track,
+                }}
+              >
+                {cat?.name ?? PROFILE_META[slug].label}
+              </span>
+              <span className="block text-[13.5px] leading-[1.45] text-dim">{cat?.description}</span>
+            </button>
+          )
+        })}
+      </div>
+    </section>
   )
 }
