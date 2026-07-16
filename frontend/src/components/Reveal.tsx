@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useReducedMotion } from 'framer-motion'
 
 export default function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
@@ -21,13 +23,17 @@ export default function Reveal({ children, delay = 0 }: { children: ReactNode; d
     return () => io.disconnect()
   }, [shown])
 
+  // With reduced motion the content is simply there — never hidden waiting on an
+  // observer, and nothing to animate.
+  if (reduce) return <div>{children}</div>
+
   return (
     <div
       ref={ref}
       style={{
         opacity: shown ? 1 : 0,
         transform: shown ? 'none' : 'translateY(26px)',
-        transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+        transition: `opacity 660ms var(--ease-out) ${delay}s, transform 660ms var(--ease-out) ${delay}s`,
         willChange: 'opacity, transform',
       }}
     >

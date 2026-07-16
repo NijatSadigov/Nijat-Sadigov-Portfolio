@@ -29,7 +29,7 @@ export default function Header({
         borderColor: 'var(--border-2)',
       }}
     >
-      <div className="shell flex items-center gap-5 py-[14px]">
+      <div className="shell flex items-center gap-3 py-[14px] sm:gap-5">
         <a href="#top" className="flex shrink-0 items-center gap-3 text-text">
           <span
             className="grid h-[30px] w-[30px] place-items-center text-[15px] font-extrabold"
@@ -43,13 +43,16 @@ export default function Header({
           >
             N
           </span>
-          <span className="text-[15px] font-bold tracking-[-.01em]">Nijat Sadigov</span>
+          {/* The name is the first thing to go when space is tight. */}
+          <span className="hidden text-[15px] font-bold tracking-[-.01em] sm:inline">
+            Nijat Sadigov
+          </span>
         </a>
 
         <nav
           role="tablist"
           aria-label="Profile"
-          className="ml-auto flex gap-1 p-1"
+          className="no-scrollbar ml-auto flex min-w-0 gap-1 overflow-x-auto p-1"
           style={{
             borderRadius: 'calc(var(--radius) + 4px)',
             background: 'var(--surface)',

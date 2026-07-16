@@ -12,8 +12,7 @@ import {
   AchievementsSection,
   CertificationsSection,
   ContactSection,
-  EducationSection,
-  ExperienceSection,
+  ExperienceEducationSection,
   SkillsSection,
 } from '../components/sections'
 import {
@@ -145,12 +144,15 @@ export default function Home() {
             onOpen={openProject}
           />
 
-          <SkillsSection no="02" skills={site.skills} active={activeId} />
-          <CertificationsSection no="03" certifications={site.certifications} active={activeId} />
-          <AchievementsSection no="04" achievements={site.achievements} active={activeId} />
-          <EducationSection no="05" education={site.education} />
-          <ExperienceSection no="06" experience={site.experience} />
-          <ContactSection no="07" email={site.profile.email} />
+          <SkillsSection skills={site.skills} active={activeId} />
+          <CertificationsSection certifications={site.certifications} active={activeId} />
+          <AchievementsSection achievements={site.achievements} active={activeId} />
+          <ExperienceEducationSection experience={site.experience} education={site.education} />
+          <ContactSection
+            email={site.profile.email}
+            socialLinks={site.socialLinks}
+            openToWork={site.profile.openToWork}
+          />
         </main>
 
         <Footer profile={site.profile} socialLinks={site.socialLinks} />

@@ -163,6 +163,15 @@ body {
   color: var(--faint);
 }
 
+/* The profile switcher scrolls rather than pushing the page wide on mobile. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
