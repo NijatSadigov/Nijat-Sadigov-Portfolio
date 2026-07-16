@@ -35,14 +35,16 @@ export function FeaturedProjects({
   if (featured.length === 0) return null
 
   return (
-    <section style={{ padding: 'clamp(40px,6vw,72px) 0 20px' }}>
+    <section id="featured" className="scroll-mt-20" style={{ padding: 'clamp(40px,6vw,72px) 0 20px' }}>
       <SectionHead
         title={active === 'all' ? 'Selected work' : 'Featured'}
         meta={`featured · ${PROFILE_META[active].label}`}
       />
+      {/* auto-fill, not auto-fit: a lone featured card keeps its track width
+          instead of stretching across the whole row. */}
       <div
         className="grid gap-4"
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}
         key={`featured-${active}`}
       >
         {featured.map((p, i) => (
@@ -83,7 +85,7 @@ export default function ProjectGrid({
   const matching = ordered.filter((p) => matchesProfile(p, categories, active)).length
 
   return (
-    <section id="work" style={{ padding: 'clamp(48px,7vw,80px) 0 20px' }}>
+    <section id="work" className="scroll-mt-20" style={{ padding: 'clamp(48px,7vw,80px) 0 20px' }}>
       <SectionHead
         title="All projects"
         meta={

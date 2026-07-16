@@ -59,6 +59,20 @@ export default function Home() {
   useEffect(() => applyMode(mode), [mode])
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
+  // Switching profile lands you on that profile's work. This runs once the new
+  // profile has rendered — mid-sweep, so the jump happens behind the overlay.
+  const firstRender = useRef(true)
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    const target = document.getElementById('featured') ?? document.getElementById('work')
+    // 'instant', not 'auto' — 'auto' defers to the page's smooth scroll-behavior,
+    // which would animate into view *after* the sweep has already lifted.
+    target?.scrollIntoView({ behavior: 'instant', block: 'start' })
+  }, [profile])
+
   // The tokens swap at the midpoint of the wipe, so the new theme is already
   // painted when the overlay clears.
   const pickProfile = useCallback(
