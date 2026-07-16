@@ -5,8 +5,8 @@ managed through an admin login — no code changes needed to add or update work.
 
 Three public **profiles** share one site: **Game Development**, **Software
 Development**, and **Academic Research**. Visitors switch between them with a
-3D "dice roll" transition; each profile re-themes the page, highlights its own
-work, and surfaces its own résumé.
+full-screen colour sweep; each profile re-themes the page (accent, heading font,
+radius, texture), highlights its own work, and surfaces its own résumé.
 
 ## Stack
 
@@ -118,5 +118,7 @@ Anything marked **Draft** stays hidden on the public site until you publish it.
 
 - All content types (projects, certifications, skills, achievements, education,
   experience, résumés, contact) have public display and full admin CRUD.
-- Homepage with hero, ALL/Game/Software/Research switching via the 3D dice roll,
+- Homepage with hero, ALL/Game/Software/Research switching via a colour sweep,
   per-profile theming (pixel-art for game dev), and category highlighting.
+- Projects without a cover image get a generated one, themed by discipline and
+  seeded from the slug, so every card looks intentional.
