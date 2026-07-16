@@ -57,7 +57,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -65,12 +65,19 @@
     <div id="root"></div>
 
     <script>
+      // Set theme + mode before paint so there's no flash of the wrong tokens.
       (function () {
+        var el = document.documentElement
         try {
-          document.documentElement.dataset.mode =
-            localStorage.getItem('portfolio.mode') || 'dark'
+          var saved = localStorage.getItem('portfolio.mode')
+          var prefersLight =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: light)').matches
+          el.dataset.mode = saved || (prefersLight ? 'light' : 'dark')
+          el.dataset.theme = localStorage.getItem('portfolio.profile') || 'all'
         } catch (e) {
-          document.documentElement.dataset.mode = 'dark'
+          el.dataset.mode = 'dark'
+          el.dataset.theme = 'all'
         }
       })()
     </script>

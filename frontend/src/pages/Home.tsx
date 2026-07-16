@@ -17,10 +17,8 @@ import {
   SectionShell,
   SkillsSection,
 } from '../components/sections'
-import { applyTheme } from '../lib/theme'
+import { applyProfile, isProfileSlug } from '../lib/theme'
 import { ALL, type SiteData } from '../types'
-
-const DEFAULT_ACCENT = '#818cf8'
 
 export default function Home() {
   const [site, setSite] = useState<SiteData | null>(null)
@@ -38,11 +36,11 @@ export default function Home() {
   useEffect(() => {
     if (!site) return
     if (active === ALL) {
-      applyTheme('default', DEFAULT_ACCENT)
+      applyProfile('all')
       return
     }
-    const cat = site.categories.find((c) => c.id === active)
-    if (cat) applyTheme(cat.theme, cat.accentColor)
+    const slug = site.categories.find((c) => c.id === active)?.slug
+    if (slug && isProfileSlug(slug)) applyProfile(slug)
   }, [active, site])
 
   const select = (id: string, dir: DiceDir) => {
