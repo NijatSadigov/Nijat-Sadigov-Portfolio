@@ -27,10 +27,10 @@ export function FeaturedProjects({
   mode: Mode
   onOpen: (p: Project) => void
 }) {
+  // Every featured project shows — the grid wraps onto as many rows as it needs.
   const featured = projects
     .filter((p) => p.featured && matchesProfile(p, categories, active))
     .sort((a, b) => b.viewCount - a.viewCount)
-    .slice(0, 3)
 
   if (featured.length === 0) return null
 
