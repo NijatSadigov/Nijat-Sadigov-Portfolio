@@ -33,4 +33,10 @@ paymentmanager.{$DOMAIN} {
 	reverse_proxy paymentmanager:3000
 }
 
+# ── Kutubxana school library system (kitabxana.<domain>) ─────────────────
+kitabxana.{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy kitabxana:8421
+}
+
 # ── More project demo subdomains ────────────────────────────────────────
